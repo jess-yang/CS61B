@@ -44,7 +44,7 @@ public class IntListTest {
         // TODO: test for correctness
         IntList modList = IntList.list(1,2,3);
         IntList argList= modList;
-        IntList.dSquareList(modList);
+        IntList.squareListRecursive(modList);
         assertEquals(IntList.list(1, 4, 9), modList);
 
         // TODO: test for non-destructiveness
