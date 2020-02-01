@@ -43,12 +43,12 @@ public class IntListTest {
     public void testSquareListRecursive() {
         // TODO: test for correctness
         IntList modList = IntList.list(1,2,3);
-        IntList argList= modList;
         IntList.squareListRecursive(modList);
-        assertEquals(IntList.list(1, 4, 9), modList);
+        assertEquals(IntList.list(1, 4, 9), IntList.squareListRecursive(modList));
 
         // TODO: test for non-destructiveness
-        assertEquals(modList,argList);
+
+        assertEquals(IntList.list(1,2,3),modList);
 
     }
 
