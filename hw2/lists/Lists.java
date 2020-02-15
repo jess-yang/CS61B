@@ -19,7 +19,27 @@ class Lists {
      *  Destructive: creates no new IntList items, and may modify the
      *  original list pointed to by L. */
     static IntListList naturalRuns(IntList L) {
-        /* *Replace this body with the solution. */
-        return null;
+        //1. check next item for increasing
+        //2. when it stops increasing, make that list
+        //3. insert it into
+        IntListList master= new IntListList();
+        IntListList master2=master;
+        //master.head= L;
+        IntList a= L;
+        IntList b= L.tail;
+        IntList c= L;
+        while(b!=null) {
+            if(a.head >= b.head){
+                master2.tail= new IntListList(c, null);
+                master2=master2.tail;
+                c = b;
+                a.tail=null;
+            }
+            a=b;
+            b=b.tail;
+
+        }
+        master2.tail= new IntListList(c, null);
+        return master.tail;
     }
 }

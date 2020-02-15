@@ -1,5 +1,6 @@
 package lists;
 
+import org.checkerframework.common.value.qual.StaticallyExecutable;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -19,7 +20,19 @@ public class ListsTest {
     // few lines of code! Make note of the IntListList.list method that
     // takes as input a 2D array.
 
+    @Test
+    public void ListsTest(){
+        int[] A= {1, 3, 7, 5, 4, 6, 9, 10, 10, 11};
+        int[][] B= {{ 1, 3, 7}, { 5}, { 4, 6, 9, 10}, { 10, 11}};
+        IntList J= IntList.list(A);
+        IntListList solution= IntListList.list(B);
+        //System.out.println(Lists.naturalRuns(J));
+        assertTrue(solution.equals(Lists.naturalRuns(J)));
+    }
+
+
     public static void main(String[] args) {
         System.exit(ucb.junit.textui.runClasses(ListsTest.class));
     }
+
 }
