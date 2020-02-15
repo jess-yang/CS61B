@@ -26,7 +26,6 @@ public class ListsTest {
         int[][] B= {{ 1, 3, 7}, { 5}, { 4, 6, 9, 10}, { 10, 11}};
         IntList J= IntList.list(A);
         IntListList solution= IntListList.list(B);
-        //System.out.println(Lists.naturalRuns(J));
         assertTrue(solution.equals(Lists.naturalRuns(J)));
     }
 
