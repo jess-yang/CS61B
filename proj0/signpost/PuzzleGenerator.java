@@ -22,8 +22,7 @@ class PuzzleGenerator implements PuzzleSource {
     public Model getPuzzle(int width, int height, boolean allowFreeEnds) {
         Model model =
             new Model(makePuzzleSolution(width, height, allowFreeEnds));
-        // FIXME: Remove the "//" on the following two lines.
-        // makeSolutionUnique(model);
+        makeSolutionUnique(model);
         model.autoconnect();
         return model;
     }
@@ -52,14 +51,7 @@ class PuzzleGenerator implements PuzzleSource {
         }
         _vals[x0][y0] = 1;
         _vals[x1][y1] = last;
-        // FIXME: Remove the following return statement and uncomment the
-        //        next three lines.
-        /**return new int[][] {
-            { 14, 9, 8, 1 },
-            { 15, 10, 7, 2 },
-            { 13, 11, 6, 3 },
-            { 16, 12, 5, 4 }
-        };**/
+
         boolean ok = findSolutionPathFrom(x0, y0);
         assert ok;
         return _vals;
@@ -134,8 +126,27 @@ class PuzzleGenerator implements PuzzleSource {
      *  numbered square in the proper direction from START (with the next
      *  number in sequence). */
     static Sq findUniqueSuccessor(Model model, Sq start) {
-        // FIXME: Fill in to satisfy the comment.
-        return null;
+        int numTimes = 0;
+        Sq uniqueSq = null;
+        for (Place connection : start.successors()) {
+            Sq connectionSq = model.get(connection);
+            if (start.connectable(connectionSq)) {
+                if (start.sequenceNum() != 0
+                        && connectionSq.sequenceNum()
+                        == start.sequenceNum() + 1) {
+                    return connectionSq;
+                } else {
+                    uniqueSq = connectionSq;
+                    numTimes++;
+                }
+            }
+        }
+
+        if (numTimes == 1) {
+            return uniqueSq;
+        } else {
+            return null;
+        }
     }
 
     /** Make all unique backward connections in MODEL (those in which there is
@@ -163,8 +174,21 @@ class PuzzleGenerator implements PuzzleSource {
      *  the only unconnected predecessor.  This is because findUniqueSuccessor
      *  already finds the other cases of numbered, unconnected cells. */
     static Sq findUniquePredecessor(Model model, Sq end) {
-        // FIXME: Replace the following to satisfy the comment.
-        return null;
+        PlaceList preds = end.predecessors();
+        Sq uniqueSq = null;
+        int times = 0;
+        for (Place connection : preds) {
+            Sq connectionSq = model.get(connection);
+            if (connectionSq.connectable(end)) {
+                uniqueSq = connectionSq;
+                times++;
+            }
+        }
+        if (times == 1) {
+            return uniqueSq;
+        } else {
+            return null;
+        }
     }
 
     /** Remove all links in MODEL and unfix numbers (other than the first and
