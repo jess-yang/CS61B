@@ -71,3 +71,14 @@ outputs:
 	        mv $$out.tmp $$out; echo " (changed)"; \
 	    fi; \
 	done
+
+student_outputs:
+	"$(MAKE)" -C ..
+	@for inp in $(TESTS); do \
+	    stud=$$(basename $$inp .in)_stud.std; \
+	    echo -n $$inp "=>" $$stud; \
+	    CLASSPATH=..:$(CLASSPATH) \
+               java $(JFLAGS) $(MAIN) --testing --no-display \
+		   < $$inp > $$stud; \
+		   echo;\
+	done

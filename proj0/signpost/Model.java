@@ -279,10 +279,15 @@ class Model implements Iterable<Model.Sq> {
             for (int seqNum1 = 1; seqNum1 <= _width * _height; seqNum1++) {
                 Sq sq = solnNumToSq(seqNum);
                 Sq sq1 = solnNumToSq(seqNum1);
-                if (sq.connectable(sq1)) {
-                    sq.connect(sq1);
-                    autoconnect = true;
+                if (sq.sequenceNum() != 0 && sq1.sequenceNum() != 0
+                        && sq.successor() == null
+                        && sq1.predecessor() == null) {
+                    if (sq.connectable(sq1)) {
+                        sq.connect(sq1);
+                        autoconnect = true;
+                    }
                 }
+
             }
         }
         return autoconnect;
@@ -291,16 +296,19 @@ class Model implements Iterable<Model.Sq> {
     /** Sets the numbers in this board's squares to the solution from which
      *  this board was last initialized by the constructor. */
     void solve() {
-        for (int x = 0; x < _width; x++) {
+        /**for (int x = 0; x < _width; x++) {
             for (int y = 0; y < _height; y++) {
                 int solutionSeq = _solution[x][y];
                 _board[x][y] = solnNumToSq(solutionSeq);
                 _board[x][y]._group = 0;
 
             }
+        }**/
+        for (Sq each : _allSquares) {
+            each._sequenceNum = _solution[each.x][each.y];
+            each.disconnect();
         }
         autoconnect();
-
         _unconnected = 0;
     }
 
@@ -656,7 +664,7 @@ class Model implements Iterable<Model.Sq> {
                     releaseGroup(this.group()); releaseGroup(next.group());
                     this._group = -1; next._group = -1;
                 } else if (this.predecessor() == null) {
-                    this._group = -1;
+                    next._group = this._group; this._group = -1;
                 } else if (next.successor() == null) {
                     next._group = -1;
                 } else {
