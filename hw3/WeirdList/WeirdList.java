@@ -48,7 +48,7 @@ public class WeirdList {
             return "";
         }
         public WeirdList map(IntUnaryFunction func) {
-            return null;
+            return EMPTY;
         }
     }
 
