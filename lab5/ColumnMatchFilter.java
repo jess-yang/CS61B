@@ -22,11 +22,11 @@ public class ColumnMatchFilter extends TableFilter {
         int numb = input.colNameToIndex(colName2);
         String vala = _next.getValue(numa);
         String valb = _next.getValue(numb);
-        if (vala == valb) {
+        if (vala.equals(valb)) {
             return true;
         } else {
             return false;
         }
     }
-    
+
 }

@@ -10,12 +10,11 @@ public class EqualityFilter extends TableFilter {
         this.input = input;
         this.index = input.colNameToIndex(colName);
         this.match = match;
-
     }
 
     @Override
     protected boolean keep() {
-        if (match == _next.getValue(index)) {
+        if (_next.getValue(index).equals(match)) {
             return true;
         }
             return false;
