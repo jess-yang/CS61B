@@ -47,6 +47,9 @@ public class WeirdList {
         public String toString() {
             return "";
         }
+        public WeirdList map(IntUnaryFunction func) {
+            return null;
+        }
     }
 
     /*
