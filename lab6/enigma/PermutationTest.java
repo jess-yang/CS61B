@@ -84,7 +84,7 @@ public abstract class PermutationTest {
     @Test
     public void testSize(){
         Permutation p = getNewPermutation("(BEACD)", getNewAlphabet("ABCDE"));
-        assertEquals(4,p.size());
+        assertEquals(5,p.size());
 
         Permutation p1 = getNewPermutation("", getNewAlphabet(""));
         assertEquals(0,p1.size());
@@ -129,18 +129,18 @@ public abstract class PermutationTest {
     }
     @Test
     public void testDerangement() {
-        Alphabet a = getNewAlphabet("JESICA");
-        Permutation p = getNewPermutation("(JJSEIAC)", a);
-        assertFalse(p.derangement());
-
         Alphabet a1 = getNewAlphabet("THEAU");
-        Permutation p1 = getNewPermutation("TEAUH", a1);
+        Permutation p1 = getNewPermutation("(TEAUH)", a1);
         assertTrue(p1.derangement());
 
         Alphabet a2 = getNewAlphabet("ABCD");
         Permutation p2 = getNewPermutation("", a2);
-        assertTrue(p2.derangement());
-        
+        assertFalse(p2.derangement());
+
+        Alphabet a3 = getNewAlphabet("ABCD");
+        Permutation p3 = getNewPermutation("(AB)", a2);
+        assertFalse(p3.derangement());
+
 
     }
 
