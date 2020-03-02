@@ -88,6 +88,9 @@ public abstract class PermutationTest {
 
         Permutation p1 = getNewPermutation("", getNewAlphabet(""));
         assertEquals(0,p1.size());
+
+        Permutation p2 = getNewPermutation("(ABC)", getNewAlphabet("ABCDE"));
+        assertEquals(3,p2.size());
     }
     @Test
     public void testInvertChar() {
@@ -129,6 +132,7 @@ public abstract class PermutationTest {
     }
     @Test
     public void testDerangement() {
+
         Alphabet a1 = getNewAlphabet("THEAU");
         Permutation p1 = getNewPermutation("(TEAUH)", a1);
         assertTrue(p1.derangement());
