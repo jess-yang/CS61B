@@ -14,7 +14,7 @@ import static enigma.TestUtils.*;
  * this class concrete by removing the 4 abstract keywords and implementing the
  * 3 abstract methods.
  *
- *  @author
+ *  @author Jessica Yang
  */
 public abstract class PermutationTest {
 
@@ -81,6 +81,67 @@ public abstract class PermutationTest {
         Permutation perm = getNewPermutation("", alpha);
         checkPerm("identity", UPPER_STRING, UPPER_STRING, perm, alpha);
     }
+    @Test
+    public void testSize(){
+        Permutation p = getNewPermutation("(BEACD)", getNewAlphabet("ABCDE"));
+        assertEquals(4,p.size());
 
-    // FIXME: Add tests here that pass on a correct Permutation and fail on buggy Permutations.
+        Permutation p1 = getNewPermutation("", getNewAlphabet(""));
+        assertEquals(0,p1.size());
+    }
+    @Test
+    public void testInvertChar() {
+        Permutation p = getNewPermutation("(BACD)", getNewAlphabet("ABCD"));
+        assertEquals('B', p.invert('A'));
+        assertEquals('D', p.invert('B'));
+        assertEquals('A', p.invert('C'));
+        assertEquals('C', p.invert('D'));
+        assertEquals(1,p.invert(0));
+        assertEquals(2,p.invert(3));
+
+        Permutation p1 = getNewPermutation("", getNewAlphabet("JKLM"));
+        assertEquals('K', p1.invert('K'));
+        assertEquals(0, p1.invert(0));
+    }
+    @Test
+    public void testPermuteChar() {
+        Permutation p = getNewPermutation("(BACD)", getNewAlphabet("ABCD"));
+        assertEquals('C', p.permute('A'));
+        assertEquals('A', p.permute('B'));
+        assertEquals('D', p.permute('C'));
+        assertEquals('B', p.permute('D'));
+        assertEquals(2,p.permute(0));
+        assertEquals(1,p.permute(3));
+
+        Permutation p1 = getNewPermutation("", getNewAlphabet("JKLM"));
+        assertEquals('K', p1.permute('K'));
+        assertEquals(0, p1.permute(0));
+    }
+    @Test
+    public void testAlphabet() {
+        Alphabet a = getNewAlphabet("JESICA");
+        Permutation p = getNewPermutation("(JSEIAC)", a);
+        assertEquals(a, p.alphabet());
+
+        Alphabet a1 = getNewAlphabet("THEAU");
+        Permutation p1 = getNewPermutation("", a1);
+        assertEquals(a1, p1.alphabet());
+    }
+    @Test
+    public void testDerangement() {
+        Alphabet a = getNewAlphabet("JESICA");
+        Permutation p = getNewPermutation("(JJSEIAC)", a);
+        assertFalse(p.derangement());
+
+        Alphabet a1 = getNewAlphabet("THEAU");
+        Permutation p1 = getNewPermutation("TEAUH", a1);
+        assertTrue(p1.derangement());
+
+        Alphabet a2 = getNewAlphabet("ABCD");
+        Permutation p2 = getNewPermutation("", a2);
+        assertTrue(p2.derangement());
+        
+
+    }
+
 }
