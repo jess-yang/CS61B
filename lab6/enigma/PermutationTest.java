@@ -90,7 +90,7 @@ public abstract class PermutationTest {
         assertEquals(0,p1.size());
 
         Permutation p2 = getNewPermutation("(ABC)", getNewAlphabet("ABCDE"));
-        assertEquals(3,p2.size());
+        assertEquals(5,p2.size());
     }
     @Test
     public void testInvertChar() {
