@@ -91,6 +91,13 @@ public abstract class PermutationTest {
 
         Permutation p2 = getNewPermutation("(ABC)", getNewAlphabet("ABCDE"));
         assertEquals(5,p2.size());
+
+        Permutation p3 = getNewPermutation("(!@) (31)", getNewAlphabet("31!@"));
+        assertEquals(4,p3.size());
+
+        Permutation p4 = getNewPermutation("   (ABC)  (DE)          (FGHI)    ", getNewAlphabet("ABCDEFGHI"));
+        assertEquals(9,p4.size());
+
     }
     @Test
     public void testInvertChar() {
@@ -105,6 +112,18 @@ public abstract class PermutationTest {
         Permutation p1 = getNewPermutation("", getNewAlphabet("JKLM"));
         assertEquals('K', p1.invert('K'));
         assertEquals(0, p1.invert(0));
+
+        Permutation p2 = getNewPermutation("(JKLM)", getNewAlphabet("JKLM"));
+        assertEquals('M', p2.invert('J'));
+        assertEquals(3, p2.invert(0));
+
+        Permutation p3 = getNewPermutation(" (A)  ", getNewAlphabet("A"));
+        assertEquals('A', p3.invert('A'));
+        assertEquals(0, p3.invert(0));
+
+        Permutation p4 = getNewPermutation("(!32@)", getNewAlphabet("!32@"));
+        assertEquals('@', p4.invert('!'));
+        assertEquals(3, p4.invert(0));
     }
     @Test
     public void testPermuteChar() {
@@ -119,16 +138,28 @@ public abstract class PermutationTest {
         Permutation p1 = getNewPermutation("", getNewAlphabet("JKLM"));
         assertEquals('K', p1.permute('K'));
         assertEquals(0, p1.permute(0));
+
+        Permutation p2 = getNewPermutation("(JKLM)", getNewAlphabet("JKLM"));
+        assertEquals('J', p2.permute('M'));
+        assertEquals(0, p2.permute(3));
+
+        Permutation p4 = getNewPermutation("(!32@)", getNewAlphabet("!32@"));
+        assertEquals('3', p4.permute('!'));
+        assertEquals(1, p4.permute(0));
     }
     @Test
     public void testAlphabet() {
         Alphabet a = getNewAlphabet("JESICA");
-        Permutation p = getNewPermutation("(JSEIAC)", a);
+        Permutation p = getNewPermutation("(JSEIAC) ", a);
         assertEquals(a, p.alphabet());
 
         Alphabet a1 = getNewAlphabet("THEAU");
         Permutation p1 = getNewPermutation("", a1);
         assertEquals(a1, p1.alphabet());
+
+        Alphabet a2 = getNewAlphabet("!23@");
+        Permutation p2 = getNewPermutation("(!3) (2@) ", a2);
+        assertEquals(a2, p2.alphabet());
     }
     @Test
     public void testDerangement() {
@@ -142,7 +173,7 @@ public abstract class PermutationTest {
         assertFalse(p2.derangement());
 
         Alphabet a3 = getNewAlphabet("ABCD");
-        Permutation p3 = getNewPermutation("(AB)", a2);
+        Permutation p3 = getNewPermutation("(ABC)(D)", a3);
         assertFalse(p3.derangement());
 
 
