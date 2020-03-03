@@ -12,18 +12,39 @@ class MovingRotor extends Rotor {
      *  The Rotor is initally in its 0 setting (first character of its
      *  alphabet).
      */
+    private String _notches;
+
     MovingRotor(String name, Permutation perm, String notches) {
         super(name, perm);
-        // FIXME
+        _notches = notches;
+        this.set(0);
     }
 
     // FIXME?
 
     @Override
     void advance() {
-        // FIXME
+        //check for rightmost rotor?
+        if (atNotch() && rotates()) {
+            _setting++;
+        }
     }
 
-    // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
+    /** Return true iff I have a ratchet and can move. */
+    @Override
+    boolean rotates() {
+        return true;
+    }
+
+    @Override
+    /** Returns true iff I am positioned to allow the rotor to my left
+     *  to advance. */
+    boolean atNotch() {
+        char settingChar = alphabet().toChar(setting());
+        if (_notches.contains(Character.toString(settingChar))) {
+            return true;
+        }
+        return false;
+    }
 
 }

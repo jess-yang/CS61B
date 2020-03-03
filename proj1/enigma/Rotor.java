@@ -3,7 +3,7 @@ package enigma;
 import static enigma.EnigmaException.*;
 
 /** Superclass that represents a rotor in the enigma machine.
- *  @author
+ *  @author Jessica Yang
  */
 class Rotor {
 
@@ -12,6 +12,7 @@ class Rotor {
         _name = name;
         _permutation = perm;
         // FIXME
+        //setting
     }
 
     /** Return my name. */
@@ -46,29 +47,36 @@ class Rotor {
 
     /** Return my current setting. */
     int setting() {
-        return 0; // FIXME
+        return _setting;
     }
 
     /** Set setting() to POSN.  */
     void set(int posn) {
-        // FIXME
+        _setting = posn;
     }
 
     /** Set setting() to character CPOSN. */
     void set(char cposn) {
-        // FIXME
+        int cposnInt = alphabet().toInt(cposn);
+        _setting = cposnInt;
     }
 
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
     int convertForward(int p) {
-        return 0;  // FIXME
+        int afterPerm = _permutation.permute(p);
+        int dest = afterPerm + _setting;
+        int adjustedDest = _permutation.wrap(dest);
+        return adjustedDest;
     }
 
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
-        return 0;  // FIXME
+        int afterInv = _permutation.invert(e);
+        int dest = afterInv - _setting;
+        int adjustedDest = _permutation.wrap(dest);
+        return adjustedDest;
     }
 
     /** Returns true iff I am positioned to allow the rotor to my left
@@ -93,5 +101,6 @@ class Rotor {
     private Permutation _permutation;
 
     // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
+    public int _setting;
 
 }

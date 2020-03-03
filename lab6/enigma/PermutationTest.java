@@ -139,9 +139,9 @@ public abstract class PermutationTest {
         assertEquals('K', p1.permute('K'));
         assertEquals(0, p1.permute(0));
 
-        Permutation p2 = getNewPermutation("(JKLM)", getNewAlphabet("JKLM"));
-        assertEquals('J', p2.permute('M'));
-        assertEquals(0, p2.permute(3));
+        Permutation p2 = getNewPermutation(" (JK) (LM)", getNewAlphabet("JKLM"));
+        assertEquals('L', p2.permute('M'));
+        assertEquals(2, p2.permute(3));
 
         Permutation p4 = getNewPermutation("(!32@)", getNewAlphabet("!32@"));
         assertEquals('3', p4.permute('!'));
