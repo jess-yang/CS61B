@@ -116,8 +116,20 @@ class Permutation {
     boolean derangement() {
         for (int i = 0; i < _alphabet.size(); i++) {
             if (!_cycles.contains(Character.toString(_alphabet.toChar(i)))) {
-                System.out.println(_alphabet.toChar(i));
                 return false;
+            }
+        }
+        for (int i = 0; i < _cycles.length(); i++) {
+            if (_cycles.charAt(i) == '(') {
+                int count = 0;
+                for (int j = i+1; _cycles.charAt(j) != ')'; j++) {
+                    if (_cycles.charAt(j) != ' ' || _cycles.charAt(j) != ')') {
+                        count++;
+                    }
+                }
+                if (count == 1) {
+                    return false;
+                }
             }
         }
         return true;
@@ -125,7 +137,4 @@ class Permutation {
 
     /** Alphabet of this permutation. */
     private Alphabet _alphabet;
-
-
-    // FIXME: ADDITIONAL FIELDS HERE, AS NEEDED
 }

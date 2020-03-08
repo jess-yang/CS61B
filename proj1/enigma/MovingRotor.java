@@ -24,10 +24,7 @@ class MovingRotor extends Rotor {
 
     @Override
     void advance() {
-        //check for rightmost rotor?
-        if (atNotch() && rotates()) {
-            _setting++;
-        }
+        set(_setting+1);
     }
 
     /** Return true iff I have a ratchet and can move. */

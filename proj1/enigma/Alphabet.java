@@ -48,13 +48,20 @@ class Alphabet {
     /** Returns character number INDEX in the alphabet, where
      *  0 <= INDEX < size(). */
     char toChar(int index) {
-        return (char) ('A' + index); // FIXME
+        return _chars.charAt(index);
     }
 
     /** Returns the index of character CH which must be in
      *  the alphabet. This is the inverse of toChar(). */
     int toInt(char ch) {
-        return ch - 'A'; // FIXME
+        char[] alphabetArray = _chars.toCharArray();
+        int count = 0;
+        for (int i = 0; i < alphabetArray.length; i++) {
+            if (alphabetArray[i] == ch) {
+                return i;
+            }
+        }
+        return alphabetArray.length+1;
     }
 
 }
