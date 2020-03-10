@@ -40,6 +40,8 @@ class Permutation {
         return _alphabet.size();
     }
 
+    String cycles() { return _cycles;}
+
     /** Return the result of applying this permutation to P modulo the
      *  alphabet size. */
     int permute(int p) {

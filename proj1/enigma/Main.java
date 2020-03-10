@@ -4,14 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import static enigma.EnigmaException.*;
 
 /** Enigma simulator.
- *  @author
+ *  @author Jessica Yang
  */
 public final class Main {
 
@@ -77,16 +76,32 @@ public final class Main {
      *  file _config and apply it to the messages in _input, sending the
      *  results to _output. */
     private void process() {
-        // FIXME
+       Machine machine = readConfig();
+       while (_input.hasNextLine()) {
+           String setting = _input.nextLine();
+           setUp(machine, setting);
+       }
+       //print message? 
     }
 
     /** Return an Enigma machine configured from the contents of configuration
      *  file _config. */
     private Machine readConfig() {
         try {
-            // FIXME
-            _alphabet = new Alphabet();
-            return new Machine(_alphabet, 2, 1, null);
+            try{
+                String alphabet = _config.next();
+                _alphabet = new Alphabet(alphabet);
+            } catch(InputMismatchException e) {
+                _alphabet = new Alphabet();
+            }
+            int numRotors = _config.nextInt();
+            int numPawls = _config.nextInt();
+
+            Collection<Rotor> allRotors = new ArrayList<Rotor>();
+            while (_config.hasNext()) {
+                allRotors.add(readRotor());
+            }
+            return new Machine(_alphabet, numRotors, numPawls, allRotors);
         } catch (NoSuchElementException excp) {
             throw error("configuration file truncated");
         }
@@ -95,7 +110,24 @@ public final class Main {
     /** Return a rotor, reading its description from _config. */
     private Rotor readRotor() {
         try {
-            return null; // FIXME
+            while (_config.hasNext()) {
+                String name = _config.next();
+                String cycle = _config.nextLine();
+                String notch = _config.next();
+                Character type = notch.charAt(0);
+                notch = notch.substring(1);
+                Permutation permutation = new Permutation(cycle, _alphabet);
+
+                if (type.equals('M')) {
+                    return new MovingRotor(name, permutation, notch);
+                } else if (type.equals('N')) {
+                    return new FixedRotor(name, permutation);
+                } else if (type.equals('R')) {
+                    return new Reflector(name, permutation);
+                    //more?
+                }
+            }
+            throw error("no defined rotors");
         } catch (NoSuchElementException excp) {
             throw error("bad rotor description");
         }
@@ -104,13 +136,39 @@ public final class Main {
     /** Set M according to the specification given on SETTINGS,
      *  which must have the format specified in the assignment. */
     private void setUp(Machine M, String settings) {
-        // FIXME
+        int machineRotors = M.numRotors();
+
+        String[] rotorArray = new String[M.numRotors()];
+        Scanner scanner = new Scanner(settings);
+
+        for (int i = 0; i < machineRotors && scanner.hasNext(); i++) {
+                rotorArray[i] = scanner.next();
+        }
+
+        M.insertRotors(rotorArray);
+        M.setRotors(scanner.next());
+        String permutation = "";
+        while (scanner.hasNext()) {
+            permutation += scanner.next();
+        }
+        Permutation perms = new Permutation(permutation, _alphabet);
+        M.setPlugboard(perms);
     }
 
     /** Print MSG in groups of five (except that the last group may
      *  have fewer letters). */
     private void printMessageLine(String msg) {
-        // FIXME
+        String ret = "";
+        char[] msgArray = msg.toCharArray();
+        int index = 0;
+        while (index < msg.length()) {
+            for (int i = 0; i < 5 && index < msg.length(); i++) {
+                ret += msgArray[index];
+                index++;
+            }
+            ret += " ";
+        }
+        _output.println(ret);
     }
 
     /** Alphabet used in this machine. */
