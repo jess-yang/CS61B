@@ -12,8 +12,6 @@ class MovingRotor extends Rotor {
      *  The Rotor is initally in its 0 setting (first character of its
      *  alphabet).
      */
-    private String _notches;
-
     MovingRotor(String name, Permutation perm, String notches) {
         super(name, perm);
         _notches = notches;
@@ -22,7 +20,7 @@ class MovingRotor extends Rotor {
 
     @Override
     void advance() {
-        set((_setting + 1) % size());
+        set((setting() + 1) % size());
     }
 
     /** Return true iff I have a ratchet and can move. */
@@ -43,5 +41,8 @@ class MovingRotor extends Rotor {
 
 
     }
+
+    /** The notches of this Rotor. */
+    private String _notches;
 
 }

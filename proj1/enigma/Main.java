@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import java.lang.reflect.Array;
-import java.util.*;
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.NoSuchElementException;
 
 import static enigma.EnigmaException.*;
 
@@ -78,19 +80,31 @@ public final class Main {
      *  results to _output. */
 
     private void process() {
-       Machine machine = readConfig();
-       while (_input.hasNextLine()) {
-           String setting = _input.nextLine();
-           if (setting.indexOf('*') != -1) {
-               setUp(machine, setting);
-           } else {
-               String message = machine.convert(setting);
-               printMessageLine(message);
-               }
-           }
+        Machine machine = readConfig();
 
-       }
+        /**String setting = _input.nextLine();
+        if (setting.charAt(0) != '*') {
+            throw error("no settings");
+        } else {
+            setUp(machine, setting);
+        }
+        while (_input.hasNextLine()) {
+            String words = _input.nextLine();
 
+            String message = machine.convert(words);
+            printMessageLine(message);
+            }
+        **/
+        while (_input.hasNextLine()) {
+            String setting = _input.nextLine();
+            if (setting.indexOf('*') != -1) {
+                setUp(machine, setting);
+            } else {
+                String message = machine.convert(setting);
+                printMessageLine(message);
+            }
+        }
+    }
 
 
     /** Return an Enigma machine configured from the contents of configuration
@@ -105,10 +119,7 @@ public final class Main {
 
             _name = _config.next();
             while (_config.hasNext()) {
-                //System.out.println("before readrotor" + _name); //fixme
                 allRotors.add(readRotor(_name));
-                //_name = _config.next();
-                //System.out.println("after readrotor" + _name); //fixme
             }
             return new Machine(_alphabet, numRotors, numPawls, allRotors);
         } catch (NoSuchElementException excp) {
@@ -117,7 +128,8 @@ public final class Main {
     }
 
 
-    /** Return a rotor, reading its description from _config. */
+    /** Return a rotor, reading its description from _config.
+     * @param name */
     private Rotor readRotor(String name) {
         try {
             while (_config.hasNextLine()) {
@@ -127,9 +139,8 @@ public final class Main {
 
 
                 String cycle = _config.nextLine();
-                //Boolean currNameRenamed = false;
                 String currName = _name;
-                while (_config.hasNext()){
+                while (_config.hasNext()) {
                     String check = _config.next();
                     if (check.charAt(0) == '(') {
                         cycle += check;
@@ -166,32 +177,26 @@ public final class Main {
             throw error("setting line not properly initiated ");
         }
         for (int i = 0; i < machineRotors && scanner.hasNext(); i++) {
-                rotorArray[i] = scanner.next();
+            rotorArray[i] = scanner.next();
         }
-        //System.out.println("before rotors inserted-- setup in main"); //fixme
         M.insertRotors(rotorArray);
-        //System.out.println("rotors inserted"); //fixme
         String rotorSettings = scanner.next();
         M.setRotors(rotorSettings);
-        //System.out.println("rotors settings set"); //fixme
         String permutation = "";
         Boolean hasPlugboard = false;
         if (scanner.hasNext()) {
             hasPlugboard = true;
         }
         while (scanner.hasNext()) {
-            //System.out.println("entered plugboard while loop"); //fixme
             String next = scanner.next();
             if (next.charAt(0) == '(') {
                 permutation += next;
             } else {
-                System.out.println("tried to make perm but nothing to add"); //fixme
                 break;
             }
         }
         if (hasPlugboard) {
             Permutation perms = new Permutation(permutation, _alphabet);
-            //System.out.println("made new perm" + permutation); //fixme
             M.setPlugboard(perms);
         }
     }
@@ -224,5 +229,6 @@ public final class Main {
     /** File for encoded/decoded messages. */
     private PrintStream _output;
 
+    /** Global variable name that is the name of rotor in _config.*/
     private String _name;
 }

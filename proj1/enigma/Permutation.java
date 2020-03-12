@@ -13,7 +13,7 @@ class Permutation {
      *  is interpreted as a permutation in cycle notation.  Characters in the
      *  alphabet that are not included in any cycle map to themselves.
      *  Whitespace is ignored. */
-    private String _cycles;
+
 
     Permutation(String cycles, Alphabet alphabet) {
         _alphabet = alphabet;
@@ -40,27 +40,30 @@ class Permutation {
         return _alphabet.size();
     }
 
-    String cycles() { return _cycles;}
+    /** Returns the cycles of my permutation. */
+    String cycles() {
+        return _cycles;
+    }
+
 
     /** Return the result of applying this permutation to P modulo the
      *  alphabet size. */
     int permute(int p) {
-        int adjustedP= wrap(p);
+        int adjustedP = wrap(p);
         char target = _alphabet.toChar(adjustedP);
         String targetString = Character.toString(target);
-        if (_cycles.contains(targetString)){
+        if (_cycles.contains(targetString)) {
             for (int i = 0; i < _cycles.length(); i++) {
                 if (_cycles.charAt(i) == target) {
-                    if (_cycles.charAt(i+1) == ')') {
+                    if (_cycles.charAt(i + 1) == ')') {
                         for (int j = i; j > 0; j--) {
-                            if (_cycles.charAt(j-1) == '(') {
+                            if (_cycles.charAt(j - 1) == '(') {
                                 target = _cycles.charAt(j);
                                 return _alphabet.toInt(target);
                             }
                         }
-                    }
-                    else {
-                        target = _cycles.charAt(i+1);
+                    } else {
+                        target = _cycles.charAt(i + 1);
                         return _alphabet.toInt(target);
                     }
                 }
@@ -72,21 +75,20 @@ class Permutation {
     /** Return the result of applying the inverse of this permutation
      *  to  C modulo the alphabet size. */
     int invert(int c) {
-        int adjustedC= wrap(c);
+        int adjustedC = wrap(c);
         char target = _alphabet.toChar(adjustedC);
-        if (_cycles.contains(Character.toString(target))){
+        if (_cycles.contains(Character.toString(target))) {
             for (int i = 0; i < _cycles.length(); i++) {
                 if (_cycles.charAt(i) == target) {
-                    if (_cycles.charAt(i-1) == '(') {
+                    if (_cycles.charAt(i - 1) == '(') {
                         for (int j = i; j > 0; j++) {
-                            if (_cycles.charAt(j+1) == ')') {
+                            if (_cycles.charAt(j + 1) == ')') {
                                 target = _cycles.charAt(j);
                                 return _alphabet.toInt(target);
                             }
                         }
-                    }
-                    else {
-                        target = _cycles.charAt(i-1);
+                    } else {
+                        target = _cycles.charAt(i - 1);
                         return _alphabet.toInt(target);
                     }
                 }
@@ -124,7 +126,7 @@ class Permutation {
         for (int i = 0; i < _cycles.length(); i++) {
             if (_cycles.charAt(i) == '(') {
                 int count = 0;
-                for (int j = i+1; _cycles.charAt(j) != ')'; j++) {
+                for (int j = i + 1; _cycles.charAt(j) != ')'; j++) {
                     if (_cycles.charAt(j) != ' ' || _cycles.charAt(j) != ')') {
                         count++;
                     }
@@ -139,4 +141,6 @@ class Permutation {
 
     /** Alphabet of this permutation. */
     private Alphabet _alphabet;
+    /** Cycles of this permutation. */
+    private String _cycles;
 }

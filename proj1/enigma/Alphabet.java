@@ -1,7 +1,5 @@
 package enigma;
 
-import java.io.IOException;
-
 /** An alphabet of encodable characters.  Provides a mapping from characters
  *  to and from indices into the alphabet.
  *  @author Jessica Yang
@@ -12,14 +10,15 @@ class Alphabet {
      *  K (numbering from 0). No character may be duplicated. */
     private String _chars;
 
+    /** A personalized alphabet of all upper-case characters.
+     * @param chars */
     Alphabet(String chars) {
-        // FIXME
-        //check duplication-- casing?
         for (int i = 0; i < chars.length(); i++) {
             String copy = chars;
             char currentLetter = chars.charAt(i);
-            String currLetterString = Character.toString(currentLetter);
-            if (copy.substring(i+1).contains(currLetterString)) {
+            String currLetterString =
+                    Character.toString(currentLetter).toUpperCase();
+            if (copy.substring(i + 1).contains(currLetterString)) {
                 throw new IllegalArgumentException("duplicated chars");
             }
         }
@@ -61,7 +60,7 @@ class Alphabet {
                 return i;
             }
         }
-        return alphabetArray.length+1;
+        return alphabetArray.length + 1;
     }
 
 }

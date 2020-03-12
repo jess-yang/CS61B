@@ -37,17 +37,13 @@ class Machine {
      *  available rotors (ROTORS[0] names the reflector).
      *  Initially, all rotors are set at their 0 setting. */
     void insertRotors(String[] rotors) {
-        //account for specific order of rotors?
         HashMap<String, Rotor> allRotorsDict = new HashMap<>();
         for (Rotor r : _allRotors) {
-            //System.out.println("machine.java - insert rotors name"+r.name()); //fixme
             allRotorsDict.put(r.name(), r);
         }
 
         for (int i = 0; i < rotors.length; i++) {
             _rotorList[i] = allRotorsDict.get(rotors[i]);
-            //System.out.println(_rotorList[i]); //fixme
-            //System.out.println(_rotorList[i].reflecting()); //fixme
         }
         if (!(_rotorList[0].reflecting())) {
             throw error("leftmost not a reflector");
@@ -59,7 +55,7 @@ class Machine {
             }
         }
         if (movingRotors != numPawls()) {
-            throw error("number of Pawls and number of moving rotors do not match");
+            throw error("qty of Pawls and moving rotors do not match");
         }
     }
 
@@ -67,31 +63,16 @@ class Machine {
      *  numRotors()-1 characters in my alphabet. The first letter refers
      *  to the leftmost rotor setting (not counting the reflector).  */
     void setRotors(String setting) {
-        if (setting.length() != numRotors()-1) {
+        if (setting.length() != numRotors() - 1) {
             throw error("incorrect number of rotor settings");
         }
         for (int i = 1; i < numRotors(); i++) {
-            //System.out.println(_rotorList[i].name()); //fixme
-            _rotorList[i].set(setting.charAt(i-1));
-            //System.out.println(i +" machine.java rotor set to"+ setting.toCharArray()[i-1]); //fixme
+            _rotorList[i].set(setting.charAt(i - 1));
         }
     }
 
     /** Set the plugboard to PLUGBOARD. */
     void setPlugboard(Permutation plugboard) {
-        /**for (int i = 0; i < plugboard.size(); i++) {
-            if (plugboard.cycles().charAt(i) == '(') {
-                int count = 0;
-                for (int j = i+1; _plugboard.cycles().charAt(j) != ')'; j++) {
-                    if (_plugboard.cycles().charAt(j) != ' ' || _plugboard.cycles().charAt(j) != ')') {
-                        count++;
-                    }
-                }
-                if (count > 2) {
-                    throw error("plugboard permutes(routes) more than 2 letters to each other");
-                }
-            }
-        }**/
         _plugboard = plugboard;
     }
 
@@ -125,7 +106,7 @@ class Machine {
         if (_plugboard != null) {
             result = _plugboard.permute(result);
         }
-        for (int i = numRotors()-1; i >= 0; i--) {
+        for (int i = numRotors() - 1; i >= 0; i--) {
             result = _rotorList[i].convertForward(result);
         }
         for (int i = 1; i < numRotors(); i++) {
@@ -152,10 +133,15 @@ class Machine {
 
     /** Common alphabet of my rotors. */
     private final Alphabet _alphabet;
+    /** Number of rotors. */
     private int _numRotors;
+    /** Number of pawls (i.e. moving rotors). */
     private int _pawls;
+    /** Collection of all rotors. */
     private Collection<Rotor> _allRotors;
+    /** List of rotors in my setup.*/
     private Rotor[] _rotorList;
+    /** Permutation of plugboard. */
     private Permutation _plugboard;
 
 }
