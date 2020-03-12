@@ -81,13 +81,17 @@ public final class Main {
        Machine machine = readConfig();
        while (_input.hasNextLine()) {
            String setting = _input.nextLine();
+           if (setting.indexOf('*') != -1) {
+               setUp(machine, setting);
+           } else {
+               String message = machine.convert(setting);
+               printMessageLine(message);
+               }
+           }
 
-           setUp(machine, setting);
-           String message = machine.convert(_input.nextLine());
-           printMessageLine(message);
        }
 
-    }
+
 
     /** Return an Enigma machine configured from the contents of configuration
      *  file _config. */
@@ -169,14 +173,14 @@ public final class Main {
         //System.out.println("rotors inserted"); //fixme
         String rotorSettings = scanner.next();
         M.setRotors(rotorSettings);
-        System.out.println("rotors settings set"); //fixme
+        //System.out.println("rotors settings set"); //fixme
         String permutation = "";
         Boolean hasPlugboard = false;
         if (scanner.hasNext()) {
             hasPlugboard = true;
         }
         while (scanner.hasNext()) {
-            System.out.println("entered plugboard while loop"); //fixme
+            //System.out.println("entered plugboard while loop"); //fixme
             String next = scanner.next();
             if (next.charAt(0) == '(') {
                 permutation += next;
@@ -187,7 +191,7 @@ public final class Main {
         }
         if (hasPlugboard) {
             Permutation perms = new Permutation(permutation, _alphabet);
-            System.out.println("made new perm" + permutation); //fixme
+            //System.out.println("made new perm" + permutation); //fixme
             M.setPlugboard(perms);
         }
     }

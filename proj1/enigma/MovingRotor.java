@@ -3,7 +3,7 @@ package enigma;
 import static enigma.EnigmaException.*;
 
 /** Class that represents a rotating rotor in the enigma machine.
- *  @author
+ *  @author Jessica Yang
  */
 class MovingRotor extends Rotor {
 
@@ -20,11 +20,9 @@ class MovingRotor extends Rotor {
         this.set(0);
     }
 
-    // FIXME?
-
     @Override
     void advance() {
-        set(_setting+1);
+        set((_setting + 1) % size());
     }
 
     /** Return true iff I have a ratchet and can move. */
@@ -42,6 +40,8 @@ class MovingRotor extends Rotor {
             return true;
         }
         return false;
+
+
     }
 
 }
