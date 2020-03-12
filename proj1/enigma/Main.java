@@ -9,6 +9,7 @@ import java.util.*;
 
 import static enigma.EnigmaException.*;
 
+
 /** Enigma simulator.
  *  @author Jessica Yang
  */
@@ -75,31 +76,35 @@ public final class Main {
     /** Configure an Enigma machine from the contents of configuration
      *  file _config and apply it to the messages in _input, sending the
      *  results to _output. */
+
     private void process() {
        Machine machine = readConfig();
        while (_input.hasNextLine()) {
            String setting = _input.nextLine();
+
            setUp(machine, setting);
+           String message = machine.convert(_input.nextLine());
+           printMessageLine(message);
        }
-       //print message? 
+
     }
 
     /** Return an Enigma machine configured from the contents of configuration
      *  file _config. */
     private Machine readConfig() {
         try {
-            try{
-                String alphabet = _config.next();
-                _alphabet = new Alphabet(alphabet);
-            } catch(InputMismatchException e) {
-                _alphabet = new Alphabet();
-            }
+            String alphabet = _config.next();
+            _alphabet = new Alphabet(alphabet);
             int numRotors = _config.nextInt();
             int numPawls = _config.nextInt();
-
             Collection<Rotor> allRotors = new ArrayList<Rotor>();
+
+            _name = _config.next();
             while (_config.hasNext()) {
-                allRotors.add(readRotor());
+                //System.out.println("before readrotor" + _name); //fixme
+                allRotors.add(readRotor(_name));
+                //_name = _config.next();
+                //System.out.println("after readrotor" + _name); //fixme
             }
             return new Machine(_alphabet, numRotors, numPawls, allRotors);
         } catch (NoSuchElementException excp) {
@@ -107,24 +112,36 @@ public final class Main {
         }
     }
 
+
     /** Return a rotor, reading its description from _config. */
-    private Rotor readRotor() {
+    private Rotor readRotor(String name) {
         try {
-            while (_config.hasNext()) {
-                String name = _config.next();
-                String cycle = _config.nextLine();
+            while (_config.hasNextLine()) {
                 String notch = _config.next();
                 Character type = notch.charAt(0);
                 notch = notch.substring(1);
+
+
+                String cycle = _config.nextLine();
+                //Boolean currNameRenamed = false;
+                String currName = _name;
+                while (_config.hasNext()){
+                    String check = _config.next();
+                    if (check.charAt(0) == '(') {
+                        cycle += check;
+                    } else {
+                        _name = check;
+                        break;
+                    }
+                }
                 Permutation permutation = new Permutation(cycle, _alphabet);
 
                 if (type.equals('M')) {
-                    return new MovingRotor(name, permutation, notch);
+                    return new MovingRotor(currName, permutation, notch);
                 } else if (type.equals('N')) {
-                    return new FixedRotor(name, permutation);
+                    return new FixedRotor(currName, permutation);
                 } else if (type.equals('R')) {
-                    return new Reflector(name, permutation);
-                    //more?
+                    return new Reflector(currName, permutation);
                 }
             }
             throw error("no defined rotors");
@@ -135,24 +152,44 @@ public final class Main {
 
     /** Set M according to the specification given on SETTINGS,
      *  which must have the format specified in the assignment. */
+
     private void setUp(Machine M, String settings) {
         int machineRotors = M.numRotors();
 
         String[] rotorArray = new String[M.numRotors()];
         Scanner scanner = new Scanner(settings);
-
+        if (!scanner.next().equals("*")) {
+            throw error("setting line not properly initiated ");
+        }
         for (int i = 0; i < machineRotors && scanner.hasNext(); i++) {
                 rotorArray[i] = scanner.next();
         }
-
+        //System.out.println("before rotors inserted-- setup in main"); //fixme
         M.insertRotors(rotorArray);
-        M.setRotors(scanner.next());
+        //System.out.println("rotors inserted"); //fixme
+        String rotorSettings = scanner.next();
+        M.setRotors(rotorSettings);
+        System.out.println("rotors settings set"); //fixme
         String permutation = "";
-        while (scanner.hasNext()) {
-            permutation += scanner.next();
+        Boolean hasPlugboard = false;
+        if (scanner.hasNext()) {
+            hasPlugboard = true;
         }
-        Permutation perms = new Permutation(permutation, _alphabet);
-        M.setPlugboard(perms);
+        while (scanner.hasNext()) {
+            System.out.println("entered plugboard while loop"); //fixme
+            String next = scanner.next();
+            if (next.charAt(0) == '(') {
+                permutation += next;
+            } else {
+                System.out.println("tried to make perm but nothing to add"); //fixme
+                break;
+            }
+        }
+        if (hasPlugboard) {
+            Permutation perms = new Permutation(permutation, _alphabet);
+            System.out.println("made new perm" + permutation); //fixme
+            M.setPlugboard(perms);
+        }
     }
 
     /** Print MSG in groups of five (except that the last group may
@@ -182,4 +219,6 @@ public final class Main {
 
     /** File for encoded/decoded messages. */
     private PrintStream _output;
+
+    private String _name;
 }

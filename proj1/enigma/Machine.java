@@ -20,6 +20,7 @@ class Machine {
         _pawls = pawls;
         _allRotors = allRotors;
         _plugboard = null;
+        _rotorList = new Rotor[numRotors()];
     }
 
     /** Return the number of rotor slots I have. */
@@ -39,13 +40,26 @@ class Machine {
         //account for specific order of rotors?
         HashMap<String, Rotor> allRotorsDict = new HashMap<>();
         for (Rotor r : _allRotors) {
+            //System.out.println("machine.java - insert rotors name"+r.name()); //fixme
             allRotorsDict.put(r.name(), r);
         }
-        _rotorList = new Rotor[numRotors()];
-        int i = 0;
-        for (String name : rotors) {
-            _rotorList[i] = allRotorsDict.get(name);
-            i++;
+
+        for (int i = 0; i < rotors.length; i++) {
+            _rotorList[i] = allRotorsDict.get(rotors[i]);
+            //System.out.println(_rotorList[i]); //fixme
+            //System.out.println(_rotorList[i].reflecting()); //fixme
+        }
+        if (!(_rotorList[0].reflecting())) {
+            throw error("leftmost not a reflector");
+        }
+        int movingRotors = 0;
+        for (Rotor r : _rotorList) {
+            if (r instanceof MovingRotor) {
+                movingRotors++;
+            }
+        }
+        if (movingRotors != numPawls()) {
+            throw error("number of Pawls and number of moving rotors do not match");
         }
     }
 
@@ -53,15 +67,20 @@ class Machine {
      *  numRotors()-1 characters in my alphabet. The first letter refers
      *  to the leftmost rotor setting (not counting the reflector).  */
     void setRotors(String setting) {
-        for (int i = 0; i < setting.length(); i++) {
-            _rotorList[i+1]._setting = setting.toCharArray()[i];
+        if (setting.length() != numRotors()-1) {
+            throw error("incorrect number of rotor settings");
+        }
+        for (int i = 1; i < numRotors(); i++) {
+            //System.out.println(_rotorList[i].name()); //fixme
+            _rotorList[i].set(setting.charAt(i-1));
+            //System.out.println(i +" machine.java rotor set to"+ setting.toCharArray()[i-1]); //fixme
         }
     }
 
     /** Set the plugboard to PLUGBOARD. */
     void setPlugboard(Permutation plugboard) {
-        for (int i = 0; i < plugboard.size(); i++) {
-            if (_plugboard.cycles().charAt(i) == '(') {
+        /**for (int i = 0; i < plugboard.size(); i++) {
+            if (plugboard.cycles().charAt(i) == '(') {
                 int count = 0;
                 for (int j = i+1; _plugboard.cycles().charAt(j) != ')'; j++) {
                     if (_plugboard.cycles().charAt(j) != ' ' || _plugboard.cycles().charAt(j) != ')') {
@@ -72,7 +91,7 @@ class Machine {
                     throw error("plugboard permutes(routes) more than 2 letters to each other");
                 }
             }
-        }
+        }**/
         _plugboard = plugboard;
     }
 
@@ -80,7 +99,27 @@ class Machine {
      *  index in the range 0..alphabet size - 1), after first advancing
      *  the machine. */
     int convert(int c) {
-        //advance shit / at notch??
+        boolean[] atNotch = new boolean[numRotors()];
+        for (int i = numRotors() - 1; i > 0; i--) {
+            if (_rotorList[i].atNotch()) {
+                atNotch[i] = true;
+            }
+        }
+        _rotorList[numRotors() - 1].advance();
+        boolean[] isAdvanced = new boolean[numRotors()];
+        isAdvanced[numRotors() - 1] = true;
+
+        for (int i = numRotors() - 1; i > 0; i--) {
+            if (atNotch[i] && _rotorList[i - 1].rotates()
+                    && !isAdvanced[i - 1]) {
+                _rotorList[i - 1].advance();
+                isAdvanced[i - 1] = true;
+                if (!isAdvanced[i]) {
+                    _rotorList[i].advance();
+                    isAdvanced[i] = true;
+                }
+            }
+        }
 
         int result = c;
         if (_plugboard != null) {
@@ -102,10 +141,10 @@ class Machine {
     /** Returns the encoding/decoding of MSG, updating the state of
      *  the rotors accordingly. */
     String convert(String msg) {
-        char[] input = msg.trim().toCharArray();
+        msg = msg.replaceAll("\\s", "");
         String output = "";
-        for (int i = 0; i < input.length; i++) {
-            int inputIndex = _alphabet.toInt(input[i]);
+        for (int i = 0; i < msg.length(); i++) {
+            int inputIndex = _alphabet.toInt(msg.charAt(i));
             output += _alphabet.toChar(convert(inputIndex));
         }
         return output;
