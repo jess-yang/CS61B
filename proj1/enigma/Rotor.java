@@ -48,6 +48,23 @@ class Rotor {
         return _setting;
     }
 
+    /** Return my current ring setting. */
+    int ringSetting() {
+        return _ringSetting;
+    }
+    /** Set setting() to POSN.
+     * @param cposn  */
+    void ringSet(char cposn) {
+        _ringsUsed = true;
+        _ringSetting = alphabet().toInt(cposn);
+    }
+
+    /** Set setting() to POSN.
+     * @return _ringsUsed*/
+    boolean ringsUsed() {
+        return _ringsUsed;
+    }
+
     /** Set setting() to POSN.  */
     void set(int posn) {
         _setting = posn;
@@ -62,20 +79,32 @@ class Rotor {
     /** Return the conversion of P (an integer in the range 0..size()-1)
      *  according to my permutation. */
     int convertForward(int p) {
+        if (ringsUsed()) {
+            p = p - _ringSetting;
+        }
         int adjustedSetting = _permutation.wrap(p + _setting);
         int afterPerm = _permutation.permute(adjustedSetting);
         int dest = afterPerm - _setting;
         int adjustedDest = _permutation.wrap(dest);
+        if (ringsUsed()) {
+            adjustedDest = _permutation.wrap(adjustedDest + _ringSetting);
+        }
         return adjustedDest;
     }
 
     /** Return the conversion of E (an integer in the range 0..size()-1)
      *  according to the inverse of my permutation. */
     int convertBackward(int e) {
+        if (ringsUsed()) {
+            e = e - _ringSetting;
+        }
         int adjustedSetting = _permutation.wrap(e + _setting);
         int afterInv = _permutation.invert(adjustedSetting);
         int dest = afterInv - _setting;
         int adjustedDest = _permutation.wrap(dest);
+        if (ringsUsed()) {
+            adjustedDest = _permutation.wrap(adjustedDest + _ringSetting);
+        }
         return adjustedDest;
     }
 
@@ -102,5 +131,11 @@ class Rotor {
 
     /** My setting. */
     private int _setting;
+
+    /** My ring setting. */
+    private int _ringSetting;
+
+    /** Whether or not rings were used. */
+    private boolean _ringsUsed = false;
 
 }

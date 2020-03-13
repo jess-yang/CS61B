@@ -76,6 +76,14 @@ class Machine {
         _plugboard = plugboard;
     }
 
+    /** Set the ring to RING and adjusts the rotor settings. */
+    void setRings(String ring) {
+        _ring = ring;
+        for (int i = 1; i < numRotors(); i++) {
+            _rotorList[i].ringSet(ring.charAt(i - 1));
+        }
+    }
+
     /** Returns the result of converting the input character C (as an
      *  index in the range 0..alphabet size - 1), after first advancing
      *  the machine. */
@@ -143,5 +151,7 @@ class Machine {
     private Rotor[] _rotorList;
     /** Permutation of plugboard. */
     private Permutation _plugboard;
+    /** Setting of rings. */
+    private String _ring;
 
 }

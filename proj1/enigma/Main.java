@@ -198,21 +198,26 @@ public final class Main {
 
 
         String permutation = "";
+        String ring = "";
         Boolean hasPlugboard = false;
-        if (scanner.hasNext()) {
-            hasPlugboard = true;
-        }
+        Boolean hasRing = false;
         while (scanner.hasNext()) {
             String next = scanner.next();
             if (next.charAt(0) == '(') {
                 permutation += next;
+                hasPlugboard = true;
             } else {
-                break;
+                hasRing = true;
+                ring += next;
             }
         }
         if (hasPlugboard) {
             Permutation perms = new Permutation(permutation, _alphabet);
             M.setPlugboard(perms);
+        }
+
+        if (hasRing) {
+            M.setRings(ring);
         }
     }
 
