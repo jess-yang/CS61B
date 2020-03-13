@@ -81,28 +81,22 @@ public final class Main {
 
     private void process() {
         Machine machine = readConfig();
-
-        /**String setting = _input.nextLine();
-        if (setting.charAt(0) != '*') {
-            throw error("no settings");
-        } else {
-            setUp(machine, setting);
-        }
+        boolean checkSettings = false;
         while (_input.hasNextLine()) {
-            String words = _input.nextLine();
-
-            String message = machine.convert(words);
-            printMessageLine(message);
+            String currentLine = _input.nextLine();
+            if (!checkSettings) {
+                if (!currentLine.contains("*")) {
+                    throw error("no settings line");
+                }
             }
-        **/
-        while (_input.hasNextLine()) {
-            String setting = _input.nextLine();
-            if (setting.indexOf('*') != -1) {
-                setUp(machine, setting);
+
+            if (currentLine.contains("*")) {
+                setUp(machine, currentLine);
             } else {
-                String message = machine.convert(setting);
+                String message = machine.convert(currentLine);
                 printMessageLine(message);
             }
+            checkSettings = true;
         }
     }
 
@@ -115,13 +109,13 @@ public final class Main {
             _alphabet = new Alphabet(alphabet);
             int numRotors = _config.nextInt();
             int numPawls = _config.nextInt();
-            Collection<Rotor> allRotors = new ArrayList<Rotor>();
+            _allRotors = new ArrayList<Rotor>();
 
             _name = _config.next();
             while (_config.hasNext()) {
-                allRotors.add(readRotor(_name));
+                _allRotors.add(readRotor(_name));
             }
-            return new Machine(_alphabet, numRotors, numPawls, allRotors);
+            return new Machine(_alphabet, numRotors, numPawls, _allRotors);
         } catch (NoSuchElementException excp) {
             throw error("configuration file truncated");
         }
@@ -137,16 +131,23 @@ public final class Main {
                 Character type = notch.charAt(0);
                 notch = notch.substring(1);
 
-
-                String cycle = _config.nextLine();
+                String cycle = _config.next();
                 String currName = _name;
                 while (_config.hasNext()) {
+                    boolean propClosed = false;
                     String check = _config.next();
                     if (check.charAt(0) == '(') {
+                        if (check.indexOf(')') != -1) {
+                            propClosed = true;
+                        }
                         cycle += check;
                     } else {
                         _name = check;
                         break;
+                    }
+
+                    if (!propClosed) {
+                        throw error("cycles not formatted right");
                     }
                 }
                 Permutation permutation = new Permutation(cycle, _alphabet);
@@ -179,9 +180,23 @@ public final class Main {
         for (int i = 0; i < machineRotors && scanner.hasNext(); i++) {
             rotorArray[i] = scanner.next();
         }
+
+        for (int i = 0; i < rotorArray.length; i++) {
+            for (int j = i + 1; j < rotorArray.length; j++) {
+                if (rotorArray[j].equals(rotorArray[i])) {
+                    throw error("duplicate rotors");
+                }
+            }
+        }
         M.insertRotors(rotorArray);
+        if (!scanner.hasNext()) {
+            throw error("expected and actual number of rotors didn't match");
+        }
         String rotorSettings = scanner.next();
+
         M.setRotors(rotorSettings);
+
+
         String permutation = "";
         Boolean hasPlugboard = false;
         if (scanner.hasNext()) {
@@ -231,4 +246,7 @@ public final class Main {
 
     /** Global variable name that is the name of rotor in _config.*/
     private String _name;
+
+    /** collection of all the rotors in the configuration.**/
+    private Collection<Rotor> _allRotors;
 }
