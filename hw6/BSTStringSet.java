@@ -9,6 +9,7 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
     public BSTStringSet() {
         _root = null;
     }
+    
 
     @Override
     public void put(String s) {
@@ -16,10 +17,12 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
         if (last == null) {
             _root = new Node(s);
         } else {
-            int c = s.compareTo(last.s);
-            if (c < 0) {
+            int compare = s.compareTo(last.s);
+            if (compare == 0) {
+                return;
+            } else if (compare < 0) {
                 last.left = new Node(s);
-            } else if (c > 0) {
+            } else if (compare > 0) {
                 last.right = new Node(s);
             }
         }
@@ -28,29 +31,33 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
     @Override
     public boolean contains(String s) {
         Node last = find(s);
-        return last != null && s.equals(last.s);
+        boolean ret = false;
+        if (last != null && s.equals(last.s)) {
+            ret = true;
+        }
+        return ret;
     }
 
     private Node find(String s) {
         if (_root == null) {
             return null;
-        }
-        Node p;
-        p = _root;
-        while (true) {
-            int c = s.compareTo(p.s);
-            Node next;
-            if (c < 0) {
-                next = p.left;
-            } else if (c > 0) {
-                next = p.right;
-            } else {
-                return p;
-            }
-            if (next == null) {
-                return p;
-            } else {
-                p = next;
+        } else {
+            Node p = _root;
+            while (true) {
+                Node next;
+                int compare = s.compareTo(p.s);
+                if (compare < 0) {
+                    next = p.left;
+                } else if (compare > 0) {
+                    next = p.right;
+                } else {
+                    return p;
+                }
+                if (next == null) {
+                    return p;
+                } else {
+                    p = next;
+                }
             }
         }
     }
@@ -75,7 +82,6 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
         private Node left;
         /** Right child of this Node. */
         private Node right;
-
         /** Creates a Node containing SP. */
         Node(String sp) {
             s = sp;
@@ -129,7 +135,6 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
 
     /** An iterator over a BSTStringSet with bounds. */
     private static class BSTIteratorRange implements Iterator<String> {
-
         private Stack<Node> _toDo = new Stack<>();
         private String _low;
         private String _high;
@@ -149,26 +154,25 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
         public String next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
+            } else {
+                Node node = _toDo.pop();
+                return node.s;
             }
-            Node node = _toDo.pop();
-            return node.s;
         }
 
         private void addTree(Node n) {
-            if (n == null) {
-                return;
-            }
-            else if (n.s.compareTo(_low) < 0) {
-                addTree(n.right);
-            } else if (n.s.compareTo(_high) > 0) {
-                addTree(n.left);
-            } else {
-                addTree(n.right);
-                _toDo.push(n);
-                addTree(n.left);
+            if (n != null) {
+                if (n.s.compareTo(_low) < 0) {
+                    addTree(n.right);
+                } else if (n.s.compareTo(_high) > 0) {
+                    addTree(n.left);
+                } else {
+                    addTree(n.right);
+                    _toDo.push(n);
+                    addTree(n.left);
+                }
             }
         }
-
     }
 
     @Override
@@ -181,7 +185,6 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
     public Iterator<String> iterator(String low, String high) {
         return new BSTIteratorRange(_root, low, high);
     }
-
 
     /** Root node of the tree. */
     private Node _root;
