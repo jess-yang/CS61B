@@ -4,7 +4,7 @@ import java.util.*;
  * Implementation of a BST based String Set.
  * @author Jessica Yang
  */
-public class BSTStringSet implements StringSet, Iterable<String> {
+public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String> {
     /** Creates a new empty set. */
     public BSTStringSet() {
         _root = null;
