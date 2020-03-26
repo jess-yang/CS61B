@@ -9,7 +9,6 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
     public BSTStringSet() {
         _root = null;
     }
-    
 
     @Override
     public void put(String s) {
@@ -43,7 +42,7 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
             return null;
         } else {
             Node p = _root;
-            while (true) {
+            while (1 == 1) {
                 Node next;
                 int compare = s.compareTo(p.s);
                 if (compare < 0) {
@@ -71,8 +70,6 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
         }
         return ar;
     }
-
-
 
     /** Represents a single Node of the tree. */
     private static class Node {
@@ -118,7 +115,6 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
             addTree(node.right);
             return node.s;
         }
-
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
@@ -132,7 +128,6 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
             }
         }
     }
-
     /** An iterator over a BSTStringSet with bounds. */
     private static class BSTIteratorRange implements Iterator<String> {
         private Stack<Node> _toDo = new Stack<>();
@@ -144,7 +139,6 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
             _high = high;
             addTree(node);
         }
-
         @Override
         public boolean hasNext() {
             return !_toDo.empty();
@@ -159,7 +153,6 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
                 return node.s;
             }
         }
-
         private void addTree(Node n) {
             if (n != null) {
                 if (n.s.compareTo(_low) < 0) {
@@ -174,18 +167,14 @@ public class BSTStringSet implements StringSet, SortedStringSet, Iterable<String
             }
         }
     }
-
     @Override
     public Iterator<String> iterator() {
         return new BSTIterator(_root);
     }
-
-
     @Override
     public Iterator<String> iterator(String low, String high) {
         return new BSTIteratorRange(_root, low, high);
     }
-
     /** Root node of the tree. */
     private Node _root;
 }
