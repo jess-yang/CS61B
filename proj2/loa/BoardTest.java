@@ -64,7 +64,8 @@ public class BoardTest {
         + "Next move: black\n"
         + "===";
 
-    /** Test display */
+
+    /** Test display. */
     @Test
     public void toStringTest() {
         assertEquals(BOARD1_STRING, new Board(BOARD1, BP).toString());

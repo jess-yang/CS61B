@@ -14,7 +14,7 @@ import static loa.Piece.*;
 import static loa.Square.*;
 
 /** Represents the state of a game of Lines of Action.
- *  @author
+ *  @author Jessica Yang
  */
 class Board {
 
@@ -37,6 +37,7 @@ class Board {
         initialize(initialContents, turn);
     }
 
+
     /** A new board in the standard initial position. */
     Board() {
         this(INITIAL_PIECES, BP);
@@ -49,8 +50,16 @@ class Board {
         copyFrom(board);
     }
 
+
     /** Set my state to CONTENTS with SIDE to move. */
     void initialize(Piece[][] contents, Piece side) {
+        _moves.clear();
+        for (int i = 0; i < contents.length; i++) {
+            for (int j = 0; j < contents[i].length; j++){
+                Square curr = sq(i,j);
+                set(curr, contents[i][j]);
+            }
+        }
         // FIXME
         _turn = side;
         _moveLimit = DEFAULT_MOVE_LIMIT;
@@ -66,8 +75,13 @@ class Board {
         if (board == this) {
             return;
         }
-        // FIXME
+        //fixme
+        _moves.clear();
+        _moves.addAll(board._moves);
+        _turn = board._turn;
     }
+
+
 
     /** Return the contents of the square at SQ. */
     Piece get(Square sq) {
@@ -78,6 +92,11 @@ class Board {
      *  to NEXT, if NEXT is not null. */
     void set(Square sq, Piece v, Piece next) {
         // FIXME
+        _board[sq.index()] = v;
+        if (next != null) {
+            _turn = next;
+        }
+
     }
 
     /** Set the square at SQ to V, without modifying the side that
@@ -99,7 +118,17 @@ class Board {
      *  is false. */
     void makeMove(Move move) {
         assert isLegal(move);
-        // FIXME
+        assert !move.isCapture(); //fixme change to accomodate for both
+        //fixme
+        _moves.add(move);
+        Square from = move.getFrom();
+        Square to = move.getTo();
+
+        Piece fromPiece = get(from);
+        set(to, _turn, turn());
+
+        _turn = _turn.opposite();
+
     }
 
     /** Retract (unmake) one move, returning to the state immediately before
