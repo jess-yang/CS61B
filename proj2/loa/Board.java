@@ -119,12 +119,10 @@ class Board {
     void makeMove(Move move) {
         assert isLegal(move);
         assert !move.isCapture(); //fixme change to accomodate for both
-        //fixme
         _moves.add(move);
         Square from = move.getFrom();
         Square to = move.getTo();
 
-        Piece fromPiece = get(from);
         set(to, _turn, turn());
 
         _turn = _turn.opposite();
@@ -135,8 +133,15 @@ class Board {
      *  that move.  Requires that movesMade () > 0. */
     void retract() {
         assert movesMade() > 0;
-        // FIXME
+        Move removed = _moves.remove(_moves.size()-1);
+        Square removedTo = removed.getTo();
+        Square removedOrigin = removed.getFrom();
+        _board[removedTo.index()] = EMP;
+        _turn = _turn.opposite();
+        //fixme what is piece is captured
+
     }
+
 
     /** Return the Piece representing who is next to move. */
     Piece turn() {
@@ -146,7 +151,24 @@ class Board {
     /** Return true iff FROM - TO is a legal move for the player currently on
      *  move. */
     boolean isLegal(Square from, Square to) {
-        return true;   // FIXME
+        // FIXME
+        Move move = Move.mv(from,to);
+        if (gameOver()) {
+            return false;
+        } else if (!Arrays.asList(ALL_SQUARES).contains(to)) {
+            return false;
+        } else if (blocked(from, to)) {
+            return false;
+        } else if (movesMade() > _moveLimit) {
+            return false;
+        }//else if (!legalMoves().contains(move)) {
+            //return false;
+        //}
+
+        return true;
+
+
+
     }
 
     /** Return true iff MOVE is legal for the player currently on move.
@@ -157,7 +179,22 @@ class Board {
 
     /** Return a sequence of all legal moves from this position. */
     List<Move> legalMoves() {
-        return null;  // FIXME
+        List<Move> ret = new ArrayList<Move>();
+        for (Square sq : ALL_SQUARES){
+            Piece piece = get(sq);
+            if (piece != EMP && piece == _turn) {
+                for (int dir = 0; dir < 8; dir++) {
+                    for (int step = 1; step < BOARD_SIZE; step++) {
+                        Square possible = sq.moveDest(dir, step);
+                        if (possible != null && isLegal(sq, possible)) {
+                            Move valid = Move.mv(sq, possible);
+                            ret.add(valid);
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
     }
 
     /** Return true iff the game is over (either player has all his
@@ -217,7 +254,22 @@ class Board {
     /** Return true if a move from FROM to TO is blocked by an opposing
      *  piece or by a friendly piece on the target square. */
     private boolean blocked(Square from, Square to) {
-        return false; // FIXME
+        Move legal = Move.mv(from, to);
+        if (get(to) != EMP && get(to) == _turn) {
+            return true;
+        }
+        int directionOfTo = from.direction(to);
+
+        for (int steps = 1; steps < from.distance(to); steps++){
+            Square current = from.moveDest(directionOfTo,steps);
+            Piece currPiece = get(current);
+            if (current != null && currPiece == _turn.opposite()) {
+                return true;
+            }
+        }
+
+        //fixme : opposing piece blocked
+        return false;
     }
 
     /** Return the size of the as-yet unvisited cluster of squares
