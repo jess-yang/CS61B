@@ -117,6 +117,7 @@ class Board {
     /** Assuming isLegal(MOVE), make MOVE. Assumes MOVE.isCapture()
      *  is false. */
     void makeMove(Move move) {
+        _subsetsInitialized = false;
         assert isLegal(move);
         if (piecesContiguous(BP) || piecesContiguous(WP)) {
             gameOver();
@@ -131,7 +132,7 @@ class Board {
         set(to, _turn, turn());
         set(from, EMP);
 
-
+        
 
         _turn = _turn.opposite();
 
@@ -372,9 +373,13 @@ class Board {
         }
 
 
-
         //white pieces below
         visited = new boolean[BOARD_SIZE][BOARD_SIZE];
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0 ; j < BOARD_SIZE; j++) {
+                visited[j][i] = false;
+            }
+        }
 
         for (Square sq : ALL_SQUARES) {
             int numContig = numContig(sq, visited, WP);
@@ -382,8 +387,6 @@ class Board {
                 _whiteRegionSizes.add(numContig(sq, visited, WP));
             }
         }
-
-
 
         Collections.sort(_whiteRegionSizes, Collections.reverseOrder());
         Collections.sort(_blackRegionSizes, Collections.reverseOrder());
