@@ -3,6 +3,8 @@
 package loa;
 
 import org.junit.Test;
+
+import static loa.Square.BOARD_SIZE;
 import static org.junit.Assert.*;
 
 import static loa.Piece.*;
@@ -48,6 +50,17 @@ public class BoardTest {
         { EMP, EMP,  BP,  BP,  WP,  WP,  WP, EMP },
         { EMP,  WP,  WP,  WP, EMP, EMP, EMP, EMP },
         { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP },
+    };
+
+    static final Piece[][] BOARDnumContig = {
+            { BP, BP, BP, BP, EMP, EMP, EMP, EMP },
+            { EMP, BP, BP, EMP, EMP, EMP, EMP, EMP },
+            { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP },
+            { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP },
+            { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP },
+            { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP },
+            { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP },
+            { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP },
     };
 
 
@@ -102,6 +115,19 @@ public class BoardTest {
         assertTrue("Board 3 black contiguous?", b3.piecesContiguous(WP));
         assertTrue("Board 3 game over", b2.gameOver());
     }
+
+    /**@Test
+    public void testnumContig() {
+        Board b1 = new Board(BOARDnumContig, BP);
+        boolean[][] visited = new boolean[BOARD_SIZE][BOARD_SIZE];
+        assertEquals(6,b1.numContig(sq(0,0), visited, BP));
+
+        Board b2 = new Board(BOARD2, BP);
+        assertEquals(9,b2.numContig(sq(3,3), visited, BP));
+    }**/
+
+
+
 
     @Test
     public void testEquals1() {

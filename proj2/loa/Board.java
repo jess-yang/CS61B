@@ -118,7 +118,7 @@ class Board {
      *  is false. */
     void makeMove(Move move) {
         assert isLegal(move);
-        //assert !move.isCapture(); //fixme change to accomodate for both
+        //fixme check for winners at each move
         Square from = move.getFrom();
         Square to = move.getTo();
 
@@ -130,6 +130,8 @@ class Board {
         set(from, EMP);
 
         _turn = _turn.opposite();
+
+
 
     }
 
@@ -152,7 +154,7 @@ class Board {
         }
 
         _turn = _turn.opposite();
-        //fixme what is piece is captured
+        //fixme
 
     }
 
@@ -241,6 +243,19 @@ class Board {
     Piece winner() {
         if (!_winnerKnown) {
             // FIXME
+            if (piecesContiguous(BP) && !piecesContiguous(WP)) {
+                _winner = BP;
+
+            } else if (piecesContiguous(WP) && !piecesContiguous(BP)) {
+                _winner = WP;
+
+            } else if (piecesContiguous(WP) && piecesContiguous(BP)) {
+                _winner = EMP;
+
+            }
+            if (movesMade() > DEFAULT_MOVE_LIMIT) {
+                _winner = EMP;
+            }
             _winnerKnown = true;
         }
         return _winner;
@@ -294,8 +309,7 @@ class Board {
                 return true;
             }
         }
-
-        //fixme : opposing piece blocked
+        //fixme
         return false;
     }
 
@@ -304,7 +318,29 @@ class Board {
      *  have already been processed or are in different clusters.  Update
      *  VISITED to reflect squares counted. */
     private int numContig(Square sq, boolean[][] visited, Piece p) {
-        return 0;  // FIXME
+        if (p == EMP) {
+            return 0;
+        }else if (get(sq) != p) {
+            return 0;
+        } else if (visited[sq.row()][sq.col()]) {
+            return 0;
+        }
+
+        visited[sq.row()][sq.col()] = true;
+        int count = 1;
+
+        for (int dir = 0; dir < 8; dir++) {
+            Square nextAdjacent = sq.moveDest(dir, 1);
+            if (nextAdjacent == null) {
+                return count;
+            } else {
+                if (get(nextAdjacent) == p) {
+                    count+= numContig(nextAdjacent, visited, p);
+                }
+            }
+
+        }
+        return count;
     }
 
     /** Set the values of _whiteRegionSizes and _blackRegionSizes. */
@@ -314,7 +350,37 @@ class Board {
         }
         _whiteRegionSizes.clear();
         _blackRegionSizes.clear();
-        // FIXME
+
+        //black pieces below
+        boolean[][] visited = new boolean[BOARD_SIZE][BOARD_SIZE];
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0 ; j < BOARD_SIZE; j++) {
+                visited[j][i] = false;
+            }
+        }
+
+        for (Square sq : ALL_SQUARES) {
+            int numContig = numContig(sq, visited, BP);
+            if (numContig > 0) {
+                _blackRegionSizes.add(numContig(sq, visited, BP));
+            }
+
+        }
+
+
+
+        //white pieces below
+        visited = new boolean[BOARD_SIZE][BOARD_SIZE];
+
+        for (Square sq : ALL_SQUARES) {
+            int numContig = numContig(sq, visited, WP);
+            if (numContig > 0) {
+                _whiteRegionSizes.add(numContig(sq, visited, WP));
+            }
+        }
+
+
+
         Collections.sort(_whiteRegionSizes, Collections.reverseOrder());
         Collections.sort(_blackRegionSizes, Collections.reverseOrder());
         _subsetsInitialized = true;
