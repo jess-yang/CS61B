@@ -152,7 +152,6 @@ class Board {
      *  move. */
     boolean isLegal(Square from, Square to) {
         // FIXME
-        Move move = Move.mv(from,to);
         if (gameOver()) {
             return false;
         } else if (!Arrays.asList(ALL_SQUARES).contains(to)) {
@@ -260,10 +259,12 @@ class Board {
         }
         int directionOfTo = from.direction(to);
 
+
         for (int steps = 1; steps < from.distance(to); steps++){
             Square current = from.moveDest(directionOfTo,steps);
             Piece currPiece = get(current);
             if (current != null && currPiece == _turn.opposite()) {
+                System.out.println(current);
                 return true;
             }
         }
