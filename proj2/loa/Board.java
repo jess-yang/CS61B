@@ -117,11 +117,9 @@ class Board {
     /** Assuming isLegal(MOVE), make MOVE. Assumes MOVE.isCapture()
      *  is false. */
     void makeMove(Move move) {
-        _subsetsInitialized = false;
+
         assert isLegal(move);
-        if (piecesContiguous(BP) || piecesContiguous(WP)) {
-            gameOver();
-        }
+
         Square from = move.getFrom();
         Square to = move.getTo();
 
@@ -132,12 +130,10 @@ class Board {
         set(to, _turn, turn());
         set(from, EMP);
 
-        
+
 
         _turn = _turn.opposite();
-
-
-
+        _subsetsInitialized = false;
     }
 
     /** Retract (unmake) one move, returning to the state immediately before
@@ -159,6 +155,7 @@ class Board {
         }
 
         _turn = _turn.opposite();
+        _subsetsInitialized = false;
         //fixme
 
     }
@@ -246,8 +243,7 @@ class Board {
     /** Return the winning side, if any.  If the game is not over, result is
      *  null.  If the game has ended in a tie, returns EMP. */
     Piece winner() {
-        if (!_winnerKnown) {
-            // FIXME
+        /**if (!_winnerKnown) {
             if (piecesContiguous(BP) && !piecesContiguous(WP)) {
                 _winner = BP;
 
@@ -262,6 +258,22 @@ class Board {
 
             }
             _winnerKnown = true;
+        }
+        return _winner; **/
+        //fixme tie????
+        if (!_winnerKnown) {
+            boolean blackCont = piecesContiguous(BP);
+            boolean whiteCont = piecesContiguous(WP);
+            if (blackCont || whiteCont) {
+                _winnerKnown = true;
+                if (whiteCont || blackCont) {
+                    _winner = _turn.opposite();
+                } else if (whiteCont) {
+                    _winner = WP;
+                } else {
+                    _winner = BP;
+                }
+            }
         }
         return _winner;
     }
@@ -387,6 +399,8 @@ class Board {
                 _whiteRegionSizes.add(numContig(sq, visited, WP));
             }
         }
+
+
 
         Collections.sort(_whiteRegionSizes, Collections.reverseOrder());
         Collections.sort(_blackRegionSizes, Collections.reverseOrder());

@@ -23,8 +23,7 @@ class HumanPlayer extends Player {
     /** Return my next move from the current position in getBoard(), assuming
      *  that side() == getBoard.turn(). Assumes the game has not ended. */
     String getMove() {
-        assert !getBoard().gameOver();
-        return getGame().readLine(side() == getBoard().turn());
+        return getGame().readLine(true);
 
 
     }
