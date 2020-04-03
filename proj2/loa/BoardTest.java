@@ -125,5 +125,17 @@ public class BoardTest {
         assertEquals("Check move count for board 1 after move + retraction",
                      0, b1.movesMade());
     }
+    @Test
+    public void testCapture() {
+        Board b1 = new Board(BOARD1, BP);
+        b1.makeMove(mv("e3-c5"));
+        assertEquals("BP at c5", BP, b1.get(sq(2, 4)));
+        assertEquals("EMP at e3", EMP, b1.get(sq(4, 2)));
+
+        b1.retract();
+        assertEquals("WP at c5", WP, b1.get(sq(2, 4)));
+        assertEquals("BP at e3", BP, b1.get(sq(4, 2)));
+
+    }
 
 }

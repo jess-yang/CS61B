@@ -56,7 +56,7 @@ class Board {
         _moves.clear();
         for (int i = 0; i < contents.length; i++) {
             for (int j = 0; j < contents[i].length; j++){
-                Square curr = sq(i,j);
+                Square curr = sq(j,i);
                 set(curr, contents[i][j]);
             }
         }
@@ -118,12 +118,16 @@ class Board {
      *  is false. */
     void makeMove(Move move) {
         assert isLegal(move);
-        assert !move.isCapture(); //fixme change to accomodate for both
-        _moves.add(move);
+        //assert !move.isCapture(); //fixme change to accomodate for both
         Square from = move.getFrom();
         Square to = move.getTo();
 
+        if (get(to) == _turn.opposite()) { //capture is true
+            move = Move.mv(from, to, true);
+        }
+        _moves.add(move);
         set(to, _turn, turn());
+        set(from, EMP);
 
         _turn = _turn.opposite();
 
@@ -134,9 +138,19 @@ class Board {
     void retract() {
         assert movesMade() > 0;
         Move removed = _moves.remove(_moves.size()-1);
+
+        boolean isCapture = removed.isCapture();
+
         Square removedTo = removed.getTo();
         Square removedOrigin = removed.getFrom();
-        _board[removedTo.index()] = EMP;
+
+        if (isCapture) {
+            _board[removedTo.index()] = _turn;
+            _board[removedOrigin.index()] = _turn.opposite();
+        } else {
+            _board[removedTo.index()] = EMP;
+        }
+
         _turn = _turn.opposite();
         //fixme what is piece is captured
 
@@ -151,22 +165,37 @@ class Board {
     /** Return true iff FROM - TO is a legal move for the player currently on
      *  move. */
     boolean isLegal(Square from, Square to) {
-        // FIXME
         if (gameOver()) {
             return false;
         } else if (!Arrays.asList(ALL_SQUARES).contains(to)) {
+            return false;
+        } else if (from.distance(to) != pieceInLine(from, to)) {
             return false;
         } else if (blocked(from, to)) {
             return false;
         } else if (movesMade() > _moveLimit) {
             return false;
-        }//else if (!legalMoves().contains(move)) {
-            //return false;
-        //}
-
+        }
         return true;
+    }
 
+    /** Return the number of pieces in the line of action, including the from piece. Added by Jessica. */
+    int pieceInLine(Square from, Square to) {
+        int numOfPieces = 0;
+        int direction = from.direction(to);
+        int oppositeDirection = (direction + 4) % 8;
+        for (int step = 1; step < BOARD_SIZE; step++) {
+            Square current = from.moveDest(direction,step);
+            if (current != null && get(current) != EMP) {
+                numOfPieces++;
+            }
+            Square currentOther = from.moveDest(oppositeDirection,step);
+            if (currentOther != null && get(currentOther) != EMP) {
+                numOfPieces++;
+            }
+        }
 
+        return numOfPieces+1;
 
     }
 
@@ -253,18 +282,15 @@ class Board {
     /** Return true if a move from FROM to TO is blocked by an opposing
      *  piece or by a friendly piece on the target square. */
     private boolean blocked(Square from, Square to) {
-        Move legal = Move.mv(from, to);
         if (get(to) != EMP && get(to) == _turn) {
             return true;
         }
         int directionOfTo = from.direction(to);
 
-
         for (int steps = 1; steps < from.distance(to); steps++){
             Square current = from.moveDest(directionOfTo,steps);
             Piece currPiece = get(current);
             if (current != null && currPiece == _turn.opposite()) {
-                System.out.println(current);
                 return true;
             }
         }
