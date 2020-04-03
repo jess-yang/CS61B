@@ -129,6 +129,8 @@ class Board {
         set(to, _turn, turn());
         set(from, EMP);
 
+
+
         _turn = _turn.opposite();
 
 
@@ -252,9 +254,9 @@ class Board {
             } else if (piecesContiguous(WP) && piecesContiguous(BP)) {
                 _winner = EMP;
 
-            }
-            if (movesMade() > DEFAULT_MOVE_LIMIT) {
+            } else if (!piecesContiguous(WP) && !piecesContiguous(BP) && movesMade() > DEFAULT_MOVE_LIMIT) {
                 _winner = EMP;
+
             }
             _winnerKnown = true;
         }

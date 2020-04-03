@@ -25,7 +25,7 @@ class HumanPlayer extends Player {
     String getMove() {
         assert !getBoard().gameOver();
         return getGame().readLine(side() == getBoard().turn());
-        
+
 
     }
 
