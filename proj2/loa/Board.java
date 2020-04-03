@@ -118,7 +118,9 @@ class Board {
      *  is false. */
     void makeMove(Move move) {
         assert isLegal(move);
-        //fixme check for winners at each move
+        if (piecesContiguous(BP) || piecesContiguous(WP)) {
+            gameOver();
+        }
         Square from = move.getFrom();
         Square to = move.getTo();
 
