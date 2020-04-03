@@ -1,0 +1,19 @@
+# Test that program recognizes and recovers from illegal moves.
+# An illegal move should have no effect on the board.
+#* java -ea loa.Main
+manual White
+c1-e3
+a5-c5
+f8-c5
+h3-f1
+c8-d7
+dump
+b1-b2
+dump
+a2-b2
+dump
+a2-a7
+dump
+f1-a1
+dump
+quit

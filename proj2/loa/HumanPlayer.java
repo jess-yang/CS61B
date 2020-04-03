@@ -3,7 +3,7 @@
 package loa;
 
 /** A Player that prompts for moves and reads them from its Game.
- *  @author
+ *  @author Jessica Yang
  */
 class HumanPlayer extends Player {
 
@@ -20,8 +20,13 @@ class HumanPlayer extends Player {
     }
 
     @Override
+    /** Return my next move from the current position in getBoard(), assuming
+     *  that side() == getBoard.turn(). Assumes the game has not ended. */
     String getMove() {
-        return "";          // FIXME
+        assert !getBoard().gameOver();
+        return getGame().readLine(side() == getBoard().turn());
+        
+
     }
 
     @Override
