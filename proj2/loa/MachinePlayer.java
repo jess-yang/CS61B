@@ -74,77 +74,56 @@ class MachinePlayer extends Player {
      *  on BOARD, does not set _foundMove. */
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
-        // FIXME
-        int bestscore = 0;
-        Move moveCopy = Move.mv("a2-b2");
-        if (depth == 0) {
-            return heuristic(board, sense);
+        int bestScore = 0;
+        if (sense == 1) {
+            bestScore = -INFTY;
+        }
+        Move tempMove = null;
+        if (depth == 0 || board.gameOver()) {
+            return heuristic(board);
         }
         for (Move move : board.legalMoves()) {
-            int tempScore = 0;
-            Board copy = new Board(board);
-            copy.makeMove(move);
-            tempScore = findMove(copy, depth - 1, true, sense, alpha, beta);
-            if (tempScore > bestscore) {
-                bestscore = tempScore;
-                moveCopy = move;
-            }
-
+            board.makeMove(move);
+            int tempScore = findMove(board, depth - 1, false, -1 * sense, alpha, beta);
+            board.retract();
             if (sense == 1) {
                 alpha = Math.max(tempScore, alpha);
             } else {
                 beta = Math.min(tempScore, beta);
             }
-            if (alpha > beta) {
-                //fixme prune
+
+            if (tempScore > bestScore && sense == 1) {
+                bestScore = tempScore;
+                tempMove = move;
+            } else if (tempScore < bestScore && sense == -1) {
+                bestScore = tempScore;
+                tempMove = move;
             }
         }
         if (saveMove) {
-            _foundMove = moveCopy;
+            _foundMove = tempMove;
         }
-
-        return bestscore;
+        return bestScore;
     }
 
     /** Return a search depth for the current position. */
     private int chooseDepth() {
-        return 1;  // FIXME
+        return 3;
     }
 
-    private int heuristic(Board board, int sense) {
-        Piece side;
-        if (sense == 1) {
-            side = WP;
-        } else {
-            side = BP;
+    private int heuristic(Board board) {
+        if (board.piecesContiguous(WP)) {
+            return WINNING_VALUE;
+        } else if (board.piecesContiguous(BP)) {
+            return -WINNING_VALUE;
         }
-        int totalNumWhite = 0;
-        int totalNumBlack = 0;
-        for (Square sq : ALL_SQUARES) {
-            Piece piece = board.get(sq);
-            if (piece == BP) {
-                totalNumBlack++;
-            } else if (piece == WP) {
-                totalNumWhite++;
-            }
-        }
-        if (side == WP) {
-            if (totalNumWhite > totalNumBlack) {
-                return -10;
-            } else if (totalNumBlack == totalNumWhite){
-                return 0;
-            } else {
-                return 10;
-            }
-        } else {
-            if (totalNumWhite > totalNumBlack) {
-                return 10;
-            } else if (totalNumBlack == totalNumWhite){
-                return 0;
-            } else {
-                return -10;
-            }
-        }
+
+        List white = board.getRegionSizes(WP);
+        List black = board.getRegionSizes(BP);
+        int numWhiteRegions = white.size();
+        int numBLackRegions = black.size();
+
+        return numWhiteRegions - numBLackRegions;
     }
 
     /** Used to convey moves discovered by findMove. */

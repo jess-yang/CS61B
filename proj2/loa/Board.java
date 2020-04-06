@@ -78,6 +78,9 @@ class Board {
         //fixme
         _moves.clear();
         _moves.addAll(board._moves);
+        for (Square sq : ALL_SQUARES) {
+            _board[sq.index()] = board.get(sq);
+        }
         _turn = board._turn;
     }
 
