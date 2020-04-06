@@ -134,6 +134,7 @@ class Board {
 
         _turn = _turn.opposite();
         _subsetsInitialized = false;
+        //fixme
     }
 
     /** Retract (unmake) one move, returning to the state immediately before
@@ -156,7 +157,6 @@ class Board {
 
         _turn = _turn.opposite();
         _subsetsInitialized = false;
-        //fixme
 
     }
 
@@ -243,32 +243,20 @@ class Board {
     /** Return the winning side, if any.  If the game is not over, result is
      *  null.  If the game has ended in a tie, returns EMP. */
     Piece winner() {
-        /**if (!_winnerKnown) {
-            if (piecesContiguous(BP) && !piecesContiguous(WP)) {
-                _winner = BP;
-
-            } else if (piecesContiguous(WP) && !piecesContiguous(BP)) {
-                _winner = WP;
-
-            } else if (piecesContiguous(WP) && piecesContiguous(BP)) {
-                _winner = EMP;
-
-            } else if (!piecesContiguous(WP) && !piecesContiguous(BP) && movesMade() > DEFAULT_MOVE_LIMIT) {
-                _winner = EMP;
-
-            }
-            _winnerKnown = true;
-        }
-        return _winner; **/
         //fixme tie????
         if (!_winnerKnown) {
+            if (movesMade() >= _moveLimit) {
+                _winner = EMP;
+            }
             boolean blackCont = piecesContiguous(BP);
             boolean whiteCont = piecesContiguous(WP);
+
+
             if (blackCont || whiteCont) {
                 _winnerKnown = true;
-                if (whiteCont || blackCont) {
+                /**if (whiteCont || blackCont) {
                     _winner = _turn.opposite();
-                } else if (whiteCont) {
+                } else **/if (whiteCont) {
                     _winner = WP;
                 } else {
                     _winner = BP;

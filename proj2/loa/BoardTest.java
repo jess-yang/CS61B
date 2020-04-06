@@ -4,6 +4,8 @@ package loa;
 
 import org.junit.Test;
 
+import java.util.List;
+
 import static loa.Square.BOARD_SIZE;
 import static org.junit.Assert.*;
 
@@ -26,6 +28,17 @@ public class BoardTest {
         { WP,  EMP, EMP, EMP,  BP, EMP, EMP, WP  },
         { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP  },
         { EMP, BP,  BP,  BP,  EMP,  BP,  BP, EMP }
+    };
+
+    static final Piece[][] BOARD1a = {
+            { EMP, BP,  EMP, EMP, EMP, EMP, EMP, EMP },
+            { WP,  EMP, EMP, EMP, EMP, EMP, EMP, EMP  },
+            { WP,  EMP, EMP, EMP, BP, EMP, EMP, EMP  },
+            { WP,  EMP, EMP, EMP, EMP, EMP, EMP, EMP  },
+            { WP,  EMP, EMP,  WP, EMP, EMP, EMP, EMP  },
+            { WP,  EMP, EMP, EMP, EMP, EMP, EMP, EMP  },
+            { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP  },
+            { EMP, EMP,  EMP, EMP,  EMP, EMP, WP, EMP }
     };
 
     /** A position in which black, but not white, pieces are contiguous. */
@@ -162,6 +175,16 @@ public class BoardTest {
         assertEquals("WP at c5", WP, b1.get(sq(2, 4)));
         assertEquals("BP at e3", BP, b1.get(sq(4, 2)));
 
+    }
+
+    @Test
+    public void legalMoves() {
+        Board b1 = new Board(BOARD1a, BP);
+        List<Move> legal = b1.legalMoves();
+        System.out.println(b1.toString());
+        for (Move move : legal) {
+            System.out.println(move);
+        }
     }
 
 }

@@ -2,10 +2,13 @@
  * University of California.  All rights reserved. */
 package loa;
 
+import java.util.List;
+
 import static loa.Piece.*;
+import static loa.Square.ALL_SQUARES;
 
 /** An automated Player.
- *  @author
+ *  @author Jessica Yang
  */
 class MachinePlayer extends Player {
 
@@ -72,10 +75,35 @@ class MachinePlayer extends Player {
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
         // FIXME
-        if (saveMove) {
-            _foundMove = null; // FIXME
+        int bestscore = 0;
+        Move moveCopy = Move.mv("a2-b2");
+        if (depth == 0) {
+            return heuristic(board, sense);
         }
-        return 0; // FIXME
+        for (Move move : board.legalMoves()) {
+            int tempScore = 0;
+            Board copy = new Board(board);
+            copy.makeMove(move);
+            tempScore = findMove(copy, depth - 1, true, sense, alpha, beta);
+            if (tempScore > bestscore) {
+                bestscore = tempScore;
+                moveCopy = move;
+            }
+
+            if (sense == 1) {
+                alpha = Math.max(tempScore, alpha);
+            } else {
+                beta = Math.min(tempScore, beta);
+            }
+            if (alpha > beta) {
+                //fixme prune
+            }
+        }
+        if (saveMove) {
+            _foundMove = moveCopy;
+        }
+
+        return bestscore;
     }
 
     /** Return a search depth for the current position. */
@@ -83,7 +111,41 @@ class MachinePlayer extends Player {
         return 1;  // FIXME
     }
 
-    // FIXME: Other methods, variables here.
+    private int heuristic(Board board, int sense) {
+        Piece side;
+        if (sense == 1) {
+            side = WP;
+        } else {
+            side = BP;
+        }
+        int totalNumWhite = 0;
+        int totalNumBlack = 0;
+        for (Square sq : ALL_SQUARES) {
+            Piece piece = board.get(sq);
+            if (piece == BP) {
+                totalNumBlack++;
+            } else if (piece == WP) {
+                totalNumWhite++;
+            }
+        }
+        if (side == WP) {
+            if (totalNumWhite > totalNumBlack) {
+                return -10;
+            } else if (totalNumBlack == totalNumWhite){
+                return 0;
+            } else {
+                return 10;
+            }
+        } else {
+            if (totalNumWhite > totalNumBlack) {
+                return 10;
+            } else if (totalNumBlack == totalNumWhite){
+                return 0;
+            } else {
+                return -10;
+            }
+        }
+    }
 
     /** Used to convey moves discovered by findMove. */
     private Move _foundMove;
