@@ -276,16 +276,13 @@ class Board {
      *  null.  If the game has ended in a tie, returns EMP. */
     Piece winner() {
         if (!_winnerKnown) {
-            if (movesMade() >= _moveLimit) {
-                _winner = EMP;
-                _winnerKnown = true;
-            }
+
             boolean blackCont = piecesContiguous(BP);
             boolean whiteCont = piecesContiguous(WP);
 
             if (blackCont || whiteCont) {
                 _winnerKnown = true;
-                if (piecesContiguous(WP) && piecesContiguous(BP)) {
+                if (blackCont && whiteCont) {
                     _winner = turn().opposite();
                 }
                 if (whiteCont) {
@@ -293,7 +290,14 @@ class Board {
                 } else {
                     _winner = BP;
                 }
+            } else if (movesMade() >= _moveLimit) {
+                _winner = EMP;
+                _winnerKnown = true;
+            } else {
+                _winner = null;
+                return null;
             }
+
         }
         return _winner;
     }
