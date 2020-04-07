@@ -72,7 +72,7 @@ class MachinePlayer extends Player {
      *  DEPTH levels.  Searching at level 0 simply returns a static estimate
      *  of the board value and does not set _foundMove. If the game is over
      *  on BOARD, does not set _foundMove. */
-    private int findMove(Board board, int depth, boolean saveMove,
+   /** private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
         int bestScore = 0;
         if (sense == 1) {
@@ -82,29 +82,75 @@ class MachinePlayer extends Player {
         if (depth == 0 || board.gameOver()) {
             return heuristic(board);
         }
+
         for (Move move : board.legalMoves()) {
-            board.makeMove(move);
+            //System.out.println("sense + move: " +sense +":"+move); //fixme
+
+            board.makeMoveTest(move);
             int tempScore = findMove(board, depth - 1, false, -1 * sense, alpha, beta);
             board.retract();
+
             if (sense == 1) {
                 alpha = Math.max(tempScore, alpha);
             } else {
                 beta = Math.min(tempScore, beta);
             }
 
+
             if (tempScore > bestScore && sense == 1) {
                 bestScore = tempScore;
                 tempMove = move;
+
             } else if (tempScore < bestScore && sense == -1) {
                 bestScore = tempScore;
                 tempMove = move;
             }
+            if (alpha >= beta) {
+                break;
+            }
         }
         if (saveMove) {
             _foundMove = tempMove;
+            System.out.println("foundmove: " +_foundMove);
         }
         return bestScore;
+    } **/
+    private int findMove(Board board, int depth, boolean saveMove,
+                         int sense, int alpha, int beta) {
+        if (board.gameOver() || depth == 0) {
+            return heuristic(board);
+        }
+        for (Move m : board.legalMoves()) {
+            board.makeMoveTest(m);
+            int score = findMove(board, depth - 1, false,
+                    sense * (-1), alpha, beta);
+            board.retract();
+            if (sense == 1) {
+                if (score > alpha) {
+                    alpha = score;
+                    if (saveMove) {
+                        _foundMove = m;
+                    }
+                }
+            } else {
+                if (score < beta) {
+                    beta = score;
+                    if (saveMove) {
+                        _foundMove = m;
+                    }
+                }
+            }
+            if (alpha >= beta) {
+                break;
+            }
+        }
+        if (sense == 1) {
+            return alpha;
+        } else {
+            return beta;
+        }
     }
+
 
     /** Return a search depth for the current position. */
     private int chooseDepth() {

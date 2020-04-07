@@ -63,11 +63,15 @@ class Board {
         // FIXME
         _turn = side;
         _moveLimit = DEFAULT_MOVE_LIMIT;
+        _winnerKnown = false; //fixme new
+        _subsetsInitialized = false; //fixme new
     }
 
     /** Set me to the initial configuration. */
     void clear() {
         initialize(INITIAL_PIECES, BP);
+        _winnerKnown = false; //fixme new
+        _subsetsInitialized = false;//fixme new
     }
 
     /** Set my state to a copy of BOARD. */
@@ -75,14 +79,18 @@ class Board {
         if (board == this) {
             return;
         }
-        //fixme
+
         _moves.clear();
         _moves.addAll(board._moves);
         for (Square sq : ALL_SQUARES) {
             _board[sq.index()] = board.get(sq);
         }
         _turn = board._turn;
+        _winnerKnown = board._winnerKnown; //fixme new
+        _subsetsInitialized = board._subsetsInitialized;//fixme new
+
     }
+
 
 
 
@@ -134,10 +142,30 @@ class Board {
         set(from, EMP);
 
 
+        _turn = _turn.opposite();
+        _subsetsInitialized = false;
+
+
+    }
+
+    /** make MOVE for testing purposes.*/
+    void makeMoveTest(Move move) {
+
+        Square from = move.getFrom();
+        Square to = move.getTo();
+
+        if (get(to) == _turn.opposite()) { //capture is true
+            move = Move.mv(from, to, true);
+        }
+        _moves.add(move);
+        set(to, _turn, turn());
+        set(from, EMP);
+
 
         _turn = _turn.opposite();
         _subsetsInitialized = false;
-        //fixme
+
+
     }
 
     /** Retract (unmake) one move, returning to the state immediately before
@@ -173,16 +201,19 @@ class Board {
      *  move. */
     boolean isLegal(Square from, Square to) {
         if (gameOver()) {
+            System.out.println("game over");
             return false;
         } else if (!Arrays.asList(ALL_SQUARES).contains(to)) {
+            //System.out.println("2");
             return false;
         } else if (from.distance(to) != pieceInLine(from, to)) {
             return false;
         } else if (blocked(from, to)) {
+            //System.out.println("4");
             return false;
-        } else if (movesMade() > _moveLimit) {
+        } /**else if (movesMade() > _moveLimit) {
             return false;
-        }
+        }**/
         return true;
     }
 
@@ -246,23 +277,23 @@ class Board {
     /** Return the winning side, if any.  If the game is not over, result is
      *  null.  If the game has ended in a tie, returns EMP. */
     Piece winner() {
-        //fixme tie????
         if (!_winnerKnown) {
             if (movesMade() >= _moveLimit) {
+                System.out.println("EMP Triggered, " + movesMade() + "/" + _moveLimit); //fixme new
                 _winner = EMP;
+                _winnerKnown = true; //fixme new
             }
             boolean blackCont = piecesContiguous(BP);
             boolean whiteCont = piecesContiguous(WP);
 
-
             if (blackCont || whiteCont) {
                 _winnerKnown = true;
-                /**if (whiteCont || blackCont) {
-                    _winner = _turn.opposite();
-                } else **/if (whiteCont) {
+                if (whiteCont) {
                     _winner = WP;
+                    //_winnerKnown = true; //fixme new
                 } else {
                     _winner = BP;
+                    //_winnerKnown = true; //fixme new
                 }
             }
         }
@@ -434,7 +465,7 @@ class Board {
     /** Limit on number of moves before tie is declared.  */
     private int _moveLimit;
     /** True iff the value of _winner is known to be valid. */
-    private boolean _winnerKnown;
+    public boolean _winnerKnown; //fixme change to private
     /** Cached value of the winner (BP, WP, EMP (for tie), or null (game still
      *  in progress).  Use only if _winnerKnown. */
     private Piece _winner;

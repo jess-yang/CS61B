@@ -255,6 +255,7 @@ class Game {
                 String next;
                 _view.update(this);
                 if (_board.gameOver() && _playing) {
+                    System.out.println("gameover triggered"); //fixme
                     announceWinner();
                     _playing = false;
                 }
@@ -286,6 +287,7 @@ class Game {
     /** Print an announcement of the winner.  Requires that the game has been
      *  won. */
     private void announceWinner() {
+        System.out.println(_board.winner()); //fixme new
         switch (_board.winner()) {
         case BP:
             _reporter.reportNote("Black wins.");
