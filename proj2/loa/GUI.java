@@ -40,16 +40,18 @@ class GUI extends TopLevel implements View, Reporter {
         super(title, true);
         addMenuButton("Game->New", this::newGame);
         addMenuButton("Game->Quit", this::quit);
+        addMenuButton("Game->Help", this::help);
 
         _widget = new BoardWidget(_pendingCommands);
         add(_widget,
-            new LayoutSpec("y", 1,
-                           "height", 1,
-                           "width", 3));
+                new LayoutSpec("y", 1,
+                        "height", 1,
+                        "width", 3));
         addLabel("To move: White", "CurrentTurn",
-                 new LayoutSpec("x", 0, "y", 0,
-                                "height", 1,
-                                "width", 3));
+                new LayoutSpec("x", 0, "y", 0,
+                        "height", 1,
+                        "width", 3));
+        // FIXME: Other components?
     }
 
     /** Response to "Quit" button click. */
@@ -60,6 +62,11 @@ class GUI extends TopLevel implements View, Reporter {
     /** Response to "New Game" button click. */
     private void newGame(String dummy) {
         _pendingCommands.offer("new");
+    }
+
+    /** Response to "Help" button click. */
+    private void help(String dummy) {
+        displayText("HELP", HELP_TEXT);
     }
 
     /** Return the next command from our widget, waiting for it as necessary.
@@ -84,15 +91,16 @@ class GUI extends TopLevel implements View, Reporter {
         _widget.update(board);
         if (board.winner() != null) {
             setLabel("CurrentTurn",
-                     String.format("Winner: %s",
-                                   board.winner().fullName()));
+                    String.format("Winner: %s",
+                            board.winner().fullName()));
         } else {
             setLabel("CurrentTurn",
-                     String.format("To move: %s", board.turn().fullName()));
+                    String.format("To move: %s", board.turn().fullName()));
         }
 
         boolean manualWhite = controller.manualWhite(),
-            manualBlack = controller.manualBlack();
+                manualBlack = controller.manualBlack();
+        // FIXME: More?
     }
 
     /** Display text in resource named TEXTRESOURCE in a new window titled
@@ -109,7 +117,7 @@ class GUI extends TopLevel implements View, Reporter {
         dispPane.setEditable(false);
         dispPane.setContentType("text/html");
         InputStream resource =
-            GUI.class.getClassLoader().getResourceAsStream(textResource);
+                GUI.class.getClassLoader().getResourceAsStream(textResource);
         StringWriter text = new StringWriter();
         try {
             while (true) {
@@ -153,6 +161,6 @@ class GUI extends TopLevel implements View, Reporter {
      *  on the board and on menus happen in parallel to the methods that
      *  call readCommand, which therefore needs to wait for clicks to happen. */
     private ArrayBlockingQueue<String> _pendingCommands =
-        new ArrayBlockingQueue<>(5);
+            new ArrayBlockingQueue<>(5);
 
 }
