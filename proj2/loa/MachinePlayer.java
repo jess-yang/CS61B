@@ -121,7 +121,7 @@ class MachinePlayer extends Player {
             return heuristic(board);
         }
         for (Move m : board.legalMoves()) {
-            board.makeMoveTest(m);
+            board.makeMove(m);
             int score = findMove(board, depth - 1, false,
                     sense * (-1), alpha, beta);
             board.retract();
