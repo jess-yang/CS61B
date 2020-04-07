@@ -117,11 +117,11 @@ class MachinePlayer extends Player {
     } **/
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
-        if (board.gameOver() || depth == 0) {
+        if (depth == 0 || board.gameOver()) {
             return heuristic(board);
         }
         for (Move m : board.legalMoves()) {
-            board.makeMove(m);
+            board.makeMoveTest(m);
             int score = findMove(board, depth - 1, false,
                     sense * (-1), alpha, beta);
             board.retract();
@@ -158,10 +158,12 @@ class MachinePlayer extends Player {
     }
 
     private int heuristic(Board board) {
-        if (board.piecesContiguous(WP)) {
-            return WINNING_VALUE;
-        } else if (board.piecesContiguous(BP)) {
-            return -WINNING_VALUE;
+        if (board.gameOver()) {
+            if (board.winner() == WP) {
+                return WINNING_VALUE;
+            } else if (board.winner() == BP) {
+                return -WINNING_VALUE;
+            }
         }
 
         List white = board.getRegionSizes(WP);

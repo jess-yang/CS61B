@@ -2,16 +2,16 @@
  * University of California.  All rights reserved. */
 package loa;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Formatter;
-import java.util.List;
+        import java.util.ArrayList;
+        import java.util.Arrays;
+        import java.util.Collections;
+        import java.util.Formatter;
+        import java.util.List;
 
-import java.util.regex.Pattern;
+        import java.util.regex.Pattern;
 
-import static loa.Piece.*;
-import static loa.Square.*;
+        import static loa.Piece.*;
+        import static loa.Square.*;
 
 /** Represents the state of a game of Lines of Action.
  *  @author Jessica Yang
@@ -90,9 +90,6 @@ class Board {
         _subsetsInitialized = board._subsetsInitialized;
 
     }
-
-
-
 
     /** Return the contents of the square at SQ. */
     Piece get(Square sq) {
@@ -185,6 +182,7 @@ class Board {
             _board[removedTo.index()] = EMP;
         }
 
+        _winnerKnown = false;
         _turn = _turn.opposite();
         _subsetsInitialized = false;
 
@@ -200,7 +198,6 @@ class Board {
      *  move. */
     boolean isLegal(Square from, Square to) {
         if (gameOver()) {
-            System.out.println("game over");
             return false;
         } else if (!Arrays.asList(ALL_SQUARES).contains(to)) {
             return false;
@@ -441,14 +438,14 @@ class Board {
     /** The standard initial configuration for Lines of Action (bottom row
      *  first). */
     static final Piece[][] INITIAL_PIECES = {
-        { EMP, BP,  BP,  BP,  BP,  BP,  BP,  EMP },
-        { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
-        { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
-        { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
-        { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
-        { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
-        { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
-        { EMP, BP,  BP,  BP,  BP,  BP,  BP,  EMP }
+            { EMP, BP,  BP,  BP,  BP,  BP,  BP,  EMP },
+            { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
+            { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
+            { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
+            { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
+            { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
+            { WP,  EMP, EMP, EMP, EMP, EMP, EMP, WP  },
+            { EMP, BP,  BP,  BP,  BP,  BP,  BP,  EMP }
     };
 
     /** Current contents of the board.  Square S is at _board[S.index()]. */
@@ -471,6 +468,6 @@ class Board {
 
     /** List of the sizes of continguous clusters of pieces, by color. */
     private final ArrayList<Integer>
-        _whiteRegionSizes = new ArrayList<>(),
-        _blackRegionSizes = new ArrayList<>();
+            _whiteRegionSizes = new ArrayList<>(),
+            _blackRegionSizes = new ArrayList<>();
 }
