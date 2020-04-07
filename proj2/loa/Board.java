@@ -288,6 +288,9 @@ class Board {
 
             if (blackCont || whiteCont) {
                 _winnerKnown = true;
+                if (piecesContiguous(WP) && piecesContiguous(BP)) {
+                    _winner = turn().opposite();
+                }
                 if (whiteCont) {
                     _winner = WP;
                     //_winnerKnown = true; //fixme new
