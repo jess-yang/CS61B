@@ -19,7 +19,7 @@ import static loa.Square.*;
 class Board {
 
     /** Default number of moves for each side that results in a draw. */
-    static final int DEFAULT_MOVE_LIMIT = 30;
+    static final int DEFAULT_MOVE_LIMIT = 60;
 
     /** Pattern describing a valid square designator (cr). */
     static final Pattern ROW_COL = Pattern.compile("^[a-h][1-8]$");
@@ -55,23 +55,23 @@ class Board {
     void initialize(Piece[][] contents, Piece side) {
         _moves.clear();
         for (int i = 0; i < contents.length; i++) {
-            for (int j = 0; j < contents[i].length; j++){
-                Square curr = sq(j,i);
+            for (int j = 0; j < contents[i].length; j++) {
+                Square curr = sq(j, i);
                 set(curr, contents[i][j]);
             }
         }
-        // FIXME
+
         _turn = side;
         _moveLimit = DEFAULT_MOVE_LIMIT;
-        _winnerKnown = false; //fixme new
-        _subsetsInitialized = false; //fixme new
+        _winnerKnown = false;
+        _subsetsInitialized = false;
     }
 
     /** Set me to the initial configuration. */
     void clear() {
         initialize(INITIAL_PIECES, BP);
-        _winnerKnown = false; //fixme new
-        _subsetsInitialized = false;//fixme new
+        _winnerKnown = false;
+        _subsetsInitialized = false;
     }
 
     /** Set my state to a copy of BOARD. */
@@ -86,8 +86,8 @@ class Board {
             _board[sq.index()] = board.get(sq);
         }
         _turn = board._turn;
-        _winnerKnown = board._winnerKnown; //fixme new
-        _subsetsInitialized = board._subsetsInitialized;//fixme new
+        _winnerKnown = board._winnerKnown;
+        _subsetsInitialized = board._subsetsInitialized;
 
     }
 
@@ -102,7 +102,6 @@ class Board {
     /** Set the square at SQ to V and set the side that is to move next
      *  to NEXT, if NEXT is not null. */
     void set(Square sq, Piece v, Piece next) {
-        // FIXME
         _board[sq.index()] = v;
         if (next != null) {
             _turn = next;
@@ -134,7 +133,7 @@ class Board {
         Square from = move.getFrom();
         Square to = move.getTo();
 
-        if (get(to) == _turn.opposite()) { //capture is true
+        if (get(to) == _turn.opposite()) {
             move = Move.mv(from, to, true);
         }
         _moves.add(move);
@@ -154,7 +153,7 @@ class Board {
         Square from = move.getFrom();
         Square to = move.getTo();
 
-        if (get(to) == _turn.opposite()) { //capture is true
+        if (get(to) == _turn.opposite()) {
             move = Move.mv(from, to, true);
         }
         _moves.add(move);
@@ -172,7 +171,7 @@ class Board {
      *  that move.  Requires that movesMade () > 0. */
     void retract() {
         assert movesMade() > 0;
-        Move removed = _moves.remove(_moves.size()-1);
+        Move removed = _moves.remove(_moves.size() - 1);
 
         boolean isCapture = removed.isCapture();
 
@@ -204,36 +203,35 @@ class Board {
             System.out.println("game over");
             return false;
         } else if (!Arrays.asList(ALL_SQUARES).contains(to)) {
-            //System.out.println("2");
             return false;
         } else if (from.distance(to) != pieceInLine(from, to)) {
             return false;
         } else if (blocked(from, to)) {
-            //System.out.println("4");
             return false;
-        } /**else if (movesMade() > _moveLimit) {
-            return false;
-        }**/
+        }
         return true;
     }
 
-    /** Return the number of pieces in the line of action, including the from piece. Added by Jessica. */
+    /** Return the number of pieces in the line of action,
+     * including the from piece. Added by Jessica.
+     * @param  from
+     * @param  to */
     int pieceInLine(Square from, Square to) {
         int numOfPieces = 0;
         int direction = from.direction(to);
         int oppositeDirection = (direction + 4) % 8;
         for (int step = 1; step < BOARD_SIZE; step++) {
-            Square current = from.moveDest(direction,step);
+            Square current = from.moveDest(direction, step);
             if (current != null && get(current) != EMP) {
                 numOfPieces++;
             }
-            Square currentOther = from.moveDest(oppositeDirection,step);
+            Square currentOther = from.moveDest(oppositeDirection, step);
             if (currentOther != null && get(currentOther) != EMP) {
                 numOfPieces++;
             }
         }
 
-        return numOfPieces+1;
+        return numOfPieces + 1;
 
     }
 
@@ -246,7 +244,7 @@ class Board {
     /** Return a sequence of all legal moves from this position. */
     List<Move> legalMoves() {
         List<Move> ret = new ArrayList<Move>();
-        for (Square sq : ALL_SQUARES){
+        for (Square sq : ALL_SQUARES) {
             Piece piece = get(sq);
             if (piece != EMP && piece == _turn) {
                 for (int dir = 0; dir < 8; dir++) {
@@ -279,9 +277,8 @@ class Board {
     Piece winner() {
         if (!_winnerKnown) {
             if (movesMade() >= _moveLimit) {
-                System.out.println("EMP Triggered, " + movesMade() + "/" + _moveLimit); //fixme new
                 _winner = EMP;
-                _winnerKnown = true; //fixme new
+                _winnerKnown = true;
             }
             boolean blackCont = piecesContiguous(BP);
             boolean whiteCont = piecesContiguous(WP);
@@ -342,14 +339,13 @@ class Board {
         }
         int directionOfTo = from.direction(to);
 
-        for (int steps = 1; steps < from.distance(to); steps++){
-            Square current = from.moveDest(directionOfTo,steps);
+        for (int steps = 1; steps < from.distance(to); steps++) {
+            Square current = from.moveDest(directionOfTo, steps);
             Piece currPiece = get(current);
             if (current != null && currPiece == _turn.opposite()) {
                 return true;
             }
         }
-        //fixme
         return false;
     }
 
@@ -360,7 +356,7 @@ class Board {
     private int numContig(Square sq, boolean[][] visited, Piece p) {
         if (p == EMP) {
             return 0;
-        }else if (get(sq) != p) {
+        } else if (get(sq) != p) {
             return 0;
         } else if (visited[sq.row()][sq.col()]) {
             return 0;
@@ -375,7 +371,7 @@ class Board {
                 return count;
             } else {
                 if (get(nextAdjacent) == p) {
-                    count+= numContig(nextAdjacent, visited, p);
+                    count += numContig(nextAdjacent, visited, p);
                 }
             }
 
@@ -391,10 +387,9 @@ class Board {
         _whiteRegionSizes.clear();
         _blackRegionSizes.clear();
 
-        //black pieces below
         boolean[][] visited = new boolean[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0 ; j < BOARD_SIZE; j++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 visited[j][i] = false;
             }
         }
@@ -407,8 +402,6 @@ class Board {
 
         }
 
-
-        //white pieces below
         visited = new boolean[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0 ; j < BOARD_SIZE; j++) {
@@ -422,7 +415,6 @@ class Board {
                 _whiteRegionSizes.add(numContig(sq, visited, WP));
             }
         }
-
 
 
         Collections.sort(_whiteRegionSizes, Collections.reverseOrder());
@@ -441,7 +433,6 @@ class Board {
         }
     }
 
-    // FIXME: Other methods, variables?
 
     /** The standard initial configuration for Lines of Action (bottom row
      *  first). */
@@ -466,7 +457,7 @@ class Board {
     /** Limit on number of moves before tie is declared.  */
     private int _moveLimit;
     /** True iff the value of _winner is known to be valid. */
-    public boolean _winnerKnown; //fixme change to private
+    private boolean _winnerKnown;
     /** Cached value of the winner (BP, WP, EMP (for tie), or null (game still
      *  in progress).  Use only if _winnerKnown. */
     private Piece _winner;

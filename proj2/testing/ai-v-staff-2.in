@@ -1,3 +1,4 @@
 #* staff-loa --strict
 seed 384293
+limit 30
 #*remote move/win
