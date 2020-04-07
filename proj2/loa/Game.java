@@ -255,6 +255,7 @@ class Game {
                 String next;
                 _view.update(this);
                 if (_board.gameOver() && _playing) {
+                    System.out.println("recognizes game over"); //fixme
                     announceWinner();
                     _playing = false;
                 }

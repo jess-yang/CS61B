@@ -19,7 +19,7 @@ import static loa.Square.*;
 class Board {
 
     /** Default number of moves for each side that results in a draw. */
-    static final int DEFAULT_MOVE_LIMIT = 60;
+    static final int DEFAULT_MOVE_LIMIT = 30;
 
     /** Pattern describing a valid square designator (cr). */
     static final Pattern ROW_COL = Pattern.compile("^[a-h][1-8]$");
@@ -293,10 +293,8 @@ class Board {
                 }
                 if (whiteCont) {
                     _winner = WP;
-                    //_winnerKnown = true; //fixme new
                 } else {
                     _winner = BP;
-                    //_winnerKnown = true; //fixme new
                 }
             }
         }
