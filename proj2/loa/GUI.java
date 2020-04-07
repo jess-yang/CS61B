@@ -39,8 +39,11 @@ class GUI extends TopLevel implements View, Reporter {
     GUI(String title) {
         super(title, true);
         addMenuButton("Game->New", this::newGame);
-        addMenuButton("Game->Quit", this::quit);
         addMenuButton("Game->Help", this::help);
+        addMenuButton("Game->Quit", this::quit);
+        addMenuButton("Game->Auto", this::auto);
+        addMenuButton("Game->Manual", this::manual);
+
 
         _widget = new BoardWidget(_pendingCommands);
         add(_widget,
@@ -51,7 +54,6 @@ class GUI extends TopLevel implements View, Reporter {
                 new LayoutSpec("x", 0, "y", 0,
                         "height", 1,
                         "width", 3));
-        // FIXME: Other components?
     }
 
     /** Response to "Quit" button click. */
@@ -67,6 +69,16 @@ class GUI extends TopLevel implements View, Reporter {
     /** Response to "Help" button click. */
     private void help(String dummy) {
         displayText("HELP", HELP_TEXT);
+    }
+
+    /** Response to "auto" button click. */
+    private void auto(String dummy) {
+        _pendingCommands.offer("auto BLACK");
+    }
+
+    /** Response to "manual" button click. */
+    private void manual(String dummy) {
+        _pendingCommands.offer("manual WHITE");
     }
 
     /** Return the next command from our widget, waiting for it as necessary.
@@ -100,7 +112,6 @@ class GUI extends TopLevel implements View, Reporter {
 
         boolean manualWhite = controller.manualWhite(),
                 manualBlack = controller.manualBlack();
-        // FIXME: More?
     }
 
     /** Display text in resource named TEXTRESOURCE in a new window titled

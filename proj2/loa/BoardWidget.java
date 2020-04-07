@@ -93,7 +93,6 @@ class BoardWidget extends Pad {
         for (Square sq : Square.ALL_SQUARES) {
             drawPiece(g, sq);
         }
-        // More? FIXME
     }
 
     /** Draw the contents of S on G. */
@@ -121,7 +120,7 @@ class BoardWidget extends Pad {
 
     /** Handle a mouse-button push on S. */
     private void mousePressed(Square s) {
-        if (_board.get(s) != EMP) {
+        if (_board.get(s) != EMP && _board.turn() == _board.get(s)) {
             _from = s;
         }
         repaint();

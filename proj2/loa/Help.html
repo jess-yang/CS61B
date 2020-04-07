@@ -11,24 +11,37 @@
   Lines of Action (LOA) is a board game invented by Claude Soucie.
 </p>
 
-<h2>Rules</h2>
-
-<p> The two players take turns, each moving a piece, and possibly capturing an opposing piece.
-  The goal of the game is to get all of one’s pieces into one group of pieces that are connected.
+<h1>Rules</h1>
+<h2>Objective</h2>
+<p>The goal of the game is to get all of one’s pieces into one group of pieces that are connected.
   Two pieces are connected if they are adjacent horizontally, vertically, or diagonally.
+  The game ends when one side's pieces are contiguous: that is, there is a path connecting any two pieces of that side's color
+  by a sequence of steps to adjacent squares (horizontally, vertically, or diagonally), each of which contains a piece of same color.</p>
+<h2>Game Play</h2>
+<p>
+  The two players take turns, each moving a piece, and possibly capturing an opposing piece.
   Play alternates between Black and White, with Black moving first.
   Each move consists of moving a piece of your color horizontally, vertically, or diagonally onto an empty square or
   onto a square occupied by an opposing piece, which is then removed from the board.
   A piece may jump over friendly pieces (without disturbing them), but may not cross enemy pieces, except one that it captures.
-  A piece must move a number of squares that is exactly equal to the total number of pieces (black and white) on the line along which it chooses to move (the line of action).
+  A piece must <b>move a number of squares that is exactly equal to the total number of pieces (black and white) on the line along which it chooses to move (the line of action). </b>
   This line contains both the squares behind and in front of the piece that moves, as well as the square the piece is on.
   A piece may not move off the board, onto another piece of its color, or over an opposing piece.
-  The game ends when one side's pieces are contiguous: that is, there is a path connecting any two pieces of that side's color
-  by a sequence of steps to adjacent squares (horizontally, vertically, or diagonally), each of which contains a piece of same color. </p>
 
-<h2>Controlling Play</h2>
+</p>
 
+<p>Information taken from https://inst.eecs.berkeley.edu/~cs61b/sp20/materials/proj/proj2/index.html</p>
 
+<h1>Controlling Play</h1>
+<h2>Game Play</h2>
+<p>To move, press your mouse on the target piece and release it on the target square. Each player must only move their respective pieces.
+The interface only responds to legal moves.</p>
+
+<h2>Help</h2>
+<p><b>New: </b>starts new game and loses all progress.</p>
+<p><b>Quit: </b> closes the GUI and loses all progress.</p>
+<p><b>Auto: </b> switches to a fully auto game.</p>
+<p><b>Manual: </b> starts a fully manual game.</p>
 
 </body>
 </html>
