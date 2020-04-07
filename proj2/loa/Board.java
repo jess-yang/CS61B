@@ -2,16 +2,16 @@
  * University of California.  All rights reserved. */
 package loa;
 
-        import java.util.ArrayList;
-        import java.util.Arrays;
-        import java.util.Collections;
-        import java.util.Formatter;
-        import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Formatter;
+import java.util.List;
 
-        import java.util.regex.Pattern;
+import java.util.regex.Pattern;
 
-        import static loa.Piece.*;
-        import static loa.Square.*;
+import static loa.Piece.*;
+import static loa.Square.*;
 
 /** Represents the state of a game of Lines of Action.
  *  @author Jessica Yang
@@ -211,8 +211,8 @@ class Board {
 
     /** Return the number of pieces in the line of action,
      * including the from piece. Added by Jessica.
-     * @param  from
-     * @param  to */
+     * @param to its square to
+     * @param from  its square from.*/
     int pieceInLine(Square from, Square to) {
         int numOfPieces = 0;
         int direction = from.direction(to);
@@ -405,7 +405,7 @@ class Board {
 
         visited = new boolean[BOARD_SIZE][BOARD_SIZE];
         for (int i = 0; i < BOARD_SIZE; i++) {
-            for (int j = 0 ; j < BOARD_SIZE; j++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 visited[j][i] = false;
             }
         }

@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static loa.Square.BOARD_SIZE;
 import static org.junit.Assert.*;
 
 import static loa.Piece.*;
@@ -30,7 +29,7 @@ public class BoardTest {
         { EMP, BP,  BP,  BP,  EMP,  BP,  BP, EMP }
     };
 
-    static final Piece[][] BOARD1a = {
+    static final Piece[][] BOARD1A = {
             { EMP, BP,  EMP, EMP, EMP, EMP, EMP, EMP },
             { WP,  EMP, EMP, EMP, EMP, EMP, EMP, EMP  },
             { WP,  EMP, EMP, EMP, BP, EMP, EMP, EMP  },
@@ -65,7 +64,7 @@ public class BoardTest {
         { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP },
     };
 
-    static final Piece[][] BOARDnumContig = {
+    static final Piece[][] BOARDNUMCONTIG = {
             { BP, BP, BP, BP, EMP, EMP, EMP, EMP },
             { EMP, BP, BP, EMP, EMP, EMP, EMP, EMP },
             { EMP, EMP, EMP, EMP, EMP, EMP, EMP, EMP },
@@ -179,7 +178,7 @@ public class BoardTest {
 
     @Test
     public void legalMoves() {
-        Board b1 = new Board(BOARD1a, BP);
+        Board b1 = new Board(BOARD1A, BP);
         List<Move> legal = b1.legalMoves();
         System.out.println(b1.toString());
         for (Move move : legal) {

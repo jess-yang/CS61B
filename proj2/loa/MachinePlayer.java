@@ -5,7 +5,6 @@ package loa;
 import java.util.List;
 
 import static loa.Piece.*;
-import static loa.Square.ALL_SQUARES;
 
 /** An automated Player.
  *  @author Jessica Yang
@@ -72,49 +71,6 @@ class MachinePlayer extends Player {
      *  DEPTH levels.  Searching at level 0 simply returns a static estimate
      *  of the board value and does not set _foundMove. If the game is over
      *  on BOARD, does not set _foundMove. */
-   /** private int findMove(Board board, int depth, boolean saveMove,
-                         int sense, int alpha, int beta) {
-        int bestScore = 0;
-        if (sense == 1) {
-            bestScore = -INFTY;
-        }
-        Move tempMove = null;
-        if (depth == 0 || board.gameOver()) {
-            return heuristic(board);
-        }
-
-        for (Move move : board.legalMoves()) {
-            //System.out.println("sense + move: " +sense +":"+move); //fixme
-
-            board.makeMoveTest(move);
-            int tempScore = findMove(board, depth - 1, false, -1 * sense, alpha, beta);
-            board.retract();
-
-            if (sense == 1) {
-                alpha = Math.max(tempScore, alpha);
-            } else {
-                beta = Math.min(tempScore, beta);
-            }
-
-
-            if (tempScore > bestScore && sense == 1) {
-                bestScore = tempScore;
-                tempMove = move;
-
-            } else if (tempScore < bestScore && sense == -1) {
-                bestScore = tempScore;
-                tempMove = move;
-            }
-            if (alpha >= beta) {
-                break;
-            }
-        }
-        if (saveMove) {
-            _foundMove = tempMove;
-            System.out.println("foundmove: " +_foundMove);
-        }
-        return bestScore;
-    } **/
     private int findMove(Board board, int depth, boolean saveMove,
                          int sense, int alpha, int beta) {
         if (depth == 0 || board.gameOver()) {
@@ -157,6 +113,8 @@ class MachinePlayer extends Player {
         return 3;
     }
 
+    /** Return a heuristic value for a certain board config.
+     * @param board  */
     private int heuristic(Board board) {
         if (board.gameOver()) {
             if (board.winner() == WP) {
