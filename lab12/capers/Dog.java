@@ -1,15 +1,18 @@
 package capers;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /** Represents a dog that can be serialized.
  * @author Sean Dooher
 */
-public class Dog { // FIXME
+public class Dog implements Serializable {
 
     /** Folder that dogs live in. */
-    static final File DOG_FOLDER = null; // FIXME
+    static final File DOG_FOLDER = Main._dogFolder;// FIXME
 
     /**
      * Creates a dog object with the specified parameters.
@@ -31,7 +34,9 @@ public class Dog { // FIXME
      */
     public static Dog fromFile(String name) {
         // FIXME
-        return null;
+        File dogFile = Utils.join(DOG_FOLDER, name+".txt");
+        Dog searched = Utils.readObject(dogFile, Dog.class);
+        return searched;
     }
 
     /**
@@ -39,7 +44,7 @@ public class Dog { // FIXME
      */
     public void haveBirthday() {
         _age += 1;
-        System.out.println(toString());
+        saveDog();
         System.out.println("Happy birthday! Woof! Woof!");
     }
 
@@ -47,7 +52,14 @@ public class Dog { // FIXME
      * Saves a dog to a file for future use.
      */
     public void saveDog() {
-        // FIXME
+        File dog = new File(DOG_FOLDER, this._name +".txt");
+        try {
+            dog.createNewFile();
+            Utils.writeObject(dog,this);
+            System.out.println(this.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -58,7 +70,7 @@ public class Dog { // FIXME
     }
 
     /** Age of dog. */
-    private int _age;
+    public int _age; //fixme change to private
     /** Breed of dog. */
     private String _breed;
     /** Name of dog. */
