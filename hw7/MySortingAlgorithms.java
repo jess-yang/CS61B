@@ -45,13 +45,13 @@ public class MySortingAlgorithms {
         @Override
         public void sort(int[] array, int k) {
             for (int i = 1; i < k; i++) {
-                int index = i-1;
+                int index = i;
                 int value = array[i];
-                while (index > -1 && value < array[index]) {
-                    array[index+1] = array[index];
+                while (index > 0 && array[index-1] > value ) {
+                    array[index] = array[index-1];
                     index--;
                 }
-                array[index+1] = value;
+                array[index] = value;
             }
         }
 
@@ -72,16 +72,16 @@ public class MySortingAlgorithms {
         public void sort(int[] array, int k) {
             for (int i = 0; i < k; i++) {
                 int smallest = array[i];
-                int index = i;
-                int indexOther = i;
-                while (indexOther < k) {
-                    if (array[indexOther] < smallest) {
-                        smallest = array[indexOther];
-                        index = indexOther;
+                int smallestIndex = i;
+                int testIndex = i;
+                while (testIndex < k) {
+                    if (array[testIndex] < smallest) {
+                        smallest = array[testIndex];
+                        smallestIndex = testIndex;
                     }
-                    indexOther++;
+                    testIndex++;
                 }
-                array[index] = array[i];
+                array[smallestIndex] = array[i];
                 array[i] = smallest;
             }
         }
@@ -217,30 +217,33 @@ public class MySortingAlgorithms {
     public static class LSDSort implements SortingAlgorithm {
         @Override
         public void sort(int[] a, int k) {
+
             ArrayList<Integer> ones = new ArrayList<>();
             ArrayList<Integer> zeroes = new ArrayList<>();
-            int i = k - 1;
-            while (i >= 0) {
-                if ((a[i] & 1) == 0) {
-                    zeroes.add(a[i]);
+            int index = k;
+            while (index > 0) {
+                if ((a[index-1] & 1) == 0) {
+                    zeroes.add(a[index-1]);
                 } else {
-                    ones.add(a[i]);
+                    ones.add(a[index-1]);
                 }
-                i--;
+                index--;
             }
-            for (int p = 1; p < 32; p++) {
+
+            int BITS = 32;
+            for (int p = 1; p < BITS; p++) {
+                int power = (int) Math.pow(2, p);
                 ArrayList<Integer> newOnes = new ArrayList<>();
                 ArrayList<Integer> newZeroes = new ArrayList<>();
-                int x = (int) Math.pow(2, p);
                 for (int one : ones) {
-                    if ((one & x) == 0) {
+                    if ((one & power) == 0) {
                         newZeroes.add(one);
                     } else {
                         newOnes.add(one);
                     }
                 }
                 for (int zero : zeroes) {
-                    if ((zero & x) == 0) {
+                    if ((zero & power) == 0) {
                         newZeroes.add(zero);
                     } else {
                         newOnes.add(zero);
@@ -249,20 +252,19 @@ public class MySortingAlgorithms {
                 ones = newOnes;
                 zeroes = newZeroes;
             }
-            i = 0;
-            Collections.reverse(ones);
-            Collections.reverse(zeroes);
-            for (int zero: zeroes) {
-                a[i] = zero;
-                i++;
+
+            index = 0;
+            for (int i = zeroes.size()-1; i >= 0; i--) {
+                a[index] = zeroes.get(i);
+                index++;
             }
-            for (int one: ones) {
-                a[i] = one;
-                i++;
+            for (int i = ones.size()-1; i >= 0; i--) {
+                a[index] = ones.get(i);
+                index++;
             }
         }
 
-        @Override
+         @Override
         public String toString() {
             return "LSD Sort";
         }
