@@ -1,6 +1,6 @@
 /**
  * Simple Red-Black tree implementation, where the keys are of type T.
- @ author
+ @ author Jessica
  */
 public class RedBlackTree<T extends Comparable<T>> {
 
@@ -33,7 +33,54 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     RBTreeNode<T> buildRedBlackTree(BTree.Node<T> r) {
         // YOUR CODE HERE
-        return null;
+        if (r == null) {
+            return null;
+        }
+
+        int itemCount = r.getItemCount();
+        int childCount = r.getChildrenCount();
+
+        if (itemCount == 3) {
+            RBTreeNode ret = new RBTreeNode(true, r.getItemAt(1));
+            ret.left =  new RBTreeNode(true, r.getItemAt(0));
+            ret.right =  new RBTreeNode(true, r.getItemAt(2));
+
+            if (childCount != 0 ) {
+                RBTreeNode left = ret.left;
+                RBTreeNode right = ret.right;
+
+                left.left = buildRedBlackTree(r.getChildAt(0));
+                left.right = buildRedBlackTree(r.getChildAt(1));
+                right.left = buildRedBlackTree(r.getChildAt(2));
+                right.right = buildRedBlackTree(r.getChildAt(3));
+            }
+
+            return ret;
+
+        } else if (itemCount == 2) {
+            RBTreeNode ret = new RBTreeNode(true, r.getItemAt(0));
+            ret.right =  new RBTreeNode(true, r.getItemAt(1));
+            if (childCount != 0 ) {
+                RBTreeNode left = ret.left;
+                RBTreeNode right = ret.right;
+
+                left = buildRedBlackTree(r.getChildAt(0));
+                right.left = buildRedBlackTree(r.getChildAt(1));
+                right.right = buildRedBlackTree(r.getChildAt(2));
+            }
+            return ret;
+        } else {
+            RBTreeNode ret = new RBTreeNode(true, r.getItemAt(0));
+            if (childCount != 0 ) {
+                RBTreeNode left = ret.left;
+                RBTreeNode right = ret.right;
+
+                left = buildRedBlackTree(r.getChildAt(0));
+                right = buildRedBlackTree(r.getChildAt(1));
+            }
+            return ret;
+        }
+
     }
 
     /**
@@ -46,7 +93,12 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     RBTreeNode<T> rotateRight(RBTreeNode<T> node) {
         // YOUR CODE HERE
-        return null;
+        if (node == null) {
+            return null;
+        }
+        node = new RBTreeNode<T>(node.isBlack, node.left.item, node.left.left,
+                new RBTreeNode<T>(false, node.item, node.left.right, node.right));
+        return node;
     }
 
     /**
@@ -59,7 +111,12 @@ public class RedBlackTree<T extends Comparable<T>> {
      */
     RBTreeNode<T> rotateLeft(RBTreeNode<T> node) {
         // YOUR CODE HERE
-        return null;
+        if (node == null) {
+            return null;
+        }
+        node = new RBTreeNode<T>(node.isBlack, node.right.item,
+                new RBTreeNode<T>(false, node.item, node.left, node.right.left), node.right.right);
+        return node;
     }
 
     /**
@@ -109,6 +166,7 @@ public class RedBlackTree<T extends Comparable<T>> {
         // Insert (return) new red leaf node.
         if (node == null) {
             // YOUR CODE HERE
+            return new RBTreeNode(false, item);
 
         }
 
@@ -118,27 +176,32 @@ public class RedBlackTree<T extends Comparable<T>> {
             return node; // do nothing.
         } else if (comp < 0) {
             // YOUR CODE HERE
+            node.left = insert(node.left, item);
 
         } else {
             // YOUR CODE HERE
+            node.right = insert(node.right, item);
 
         }
 
         // handle case C and "Right-leaning" situation.
         if (isRed(node.right) && !isRed(node.left)) {
             // YOUR CODE HERE
+            node = rotateRight(node);
 
         }
 
         // handle case B
         if (isRed(node.left) && isRed(node.left.left)) {
             // YOUR CODE HERE
+            node = rotateLeft(node);
 
         }
 
         // handle case A
         if (isRed(node.left) && isRed(node.right)) {
             // YOUR CODE HERE
+            flipColors(node);
 
         }
         return node;
