@@ -23,7 +23,14 @@ public class UnionFind {
     /** Return the representative of the set currently containing V.
      *  Assumes V is contained in one of the sets.  */
     public int find(int v) {
-        return _parent[v];
+        if (_parent[v] < 0) {
+            return v;
+        }
+        while (v != _parent[v]) {
+            _parent[v] = _parent[_parent[v]];
+            v = _parent[v];
+        }
+        return v;
     }
 
     /** Return true iff U and V are in the same set. */
