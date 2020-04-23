@@ -12,9 +12,11 @@ public class UnionFind {
      */
     public UnionFind(int N) {
         _parent = new int[N+1];
+        _sizes = new int[N+1];
 
         for(int i = 0; i <= N; i++){
             _parent[i] = i;
+            _sizes[i] = 1;
         }
 
         //_count = N;
@@ -32,7 +34,7 @@ public class UnionFind {
         }
         return v;
     }
-
+    
     /** Return true iff U and V are in the same set. */
     public boolean samePartition(int u, int v) {
         return find(u) == find(v);
@@ -41,16 +43,26 @@ public class UnionFind {
     /** Union U and V into a single set, returning its representative. */
     public int union(int u, int v) {
         int uParent = find(u);
+        int vParent = find(v);
+        int uParentSize = _sizes[uParent];
+        int vParentSize = _sizes[vParent];
+
         if (samePartition(u,v)) {
             return uParent;
         }
-        for(int index = 0 ; index < _parent.length; index++){
-            if(_parent[index] == uParent){
-                _parent[index] = find(v);
-            }
+        //for(int index = 0 ; index < _parent.length; index++){
+        if (uParentSize > vParentSize) {
+            _parent[vParent] = uParent;
+            _sizes[uParent] += _sizes[vParent];
+        } else {
+            _parent[uParent] = vParent;
+            _sizes[vParent] += _sizes[uParent];
         }
+
+        //}
         return find(v);
     }
 
     private int[] _parent;
+    private int[] _sizes;
 }
