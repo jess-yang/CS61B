@@ -25,16 +25,12 @@ public class UnionFind {
     /** Return the representative of the set currently containing V.
      *  Assumes V is contained in one of the sets.  */
     public int find(int v) {
-        if (_parent[v] < 0) {
-            return v;
-        }
         while (v != _parent[v]) {
-            _parent[v] = _parent[_parent[v]];
             v = _parent[v];
         }
         return v;
     }
-    
+
     /** Return true iff U and V are in the same set. */
     public boolean samePartition(int u, int v) {
         return find(u) == find(v);
@@ -50,7 +46,6 @@ public class UnionFind {
         if (samePartition(u,v)) {
             return uParent;
         }
-        //for(int index = 0 ; index < _parent.length; index++){
         if (uParentSize > vParentSize) {
             _parent[vParent] = uParent;
             _sizes[uParent] += _sizes[vParent];
@@ -59,7 +54,6 @@ public class UnionFind {
             _sizes[vParent] += _sizes[uParent];
         }
 
-        //}
         return find(v);
     }
 
