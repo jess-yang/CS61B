@@ -4,20 +4,26 @@
  *  At any given time, for a structure partitioning the integers 1 to N, 
  *  into sets, each set is represented by a unique member of that
  *  set, called its representative.
- *  @author
+ *  @author Jessica Yang
  */
 public class UnionFind {
 
     /** A union-find structure consisting of the sets { 1 }, { 2 }, ... { N }.
      */
     public UnionFind(int N) {
-        // FIXME
+        _parent = new int[N+1];
+
+        for(int i = 0; i <= N; i++){
+            _parent[i] = i;
+        }
+
+        //_count = N;
     }
 
     /** Return the representative of the set currently containing V.
      *  Assumes V is contained in one of the sets.  */
     public int find(int v) {
-        return 0;  // FIXME
+        return _parent[v];
     }
 
     /** Return true iff U and V are in the same set. */
@@ -27,8 +33,17 @@ public class UnionFind {
 
     /** Union U and V into a single set, returning its representative. */
     public int union(int u, int v) {
-        return 0;  // FIXME
+        int uParent = find(u);
+        if (samePartition(u,v)) {
+            return uParent;
+        }
+        for(int index = 0 ; index < _parent.length; index++){
+            if(_parent[index] == uParent){
+                _parent[index] = find(v);
+            }
+        }
+        return find(v);
     }
 
-    // FIXME
+    private int[] _parent;
 }
