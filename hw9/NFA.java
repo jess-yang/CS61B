@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * An implementation of a Non-deterministic Finite Automaton (NFA).
+                         * An implementation of a Non-deterministic Finite Automaton (NFA).
  *
  *
  * For this implementation, our legal symbols are every Java character with the
