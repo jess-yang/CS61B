@@ -1,7 +1,4 @@
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 /**
                          * An implementation of a Non-deterministic Finite Automaton (NFA).
@@ -26,7 +23,7 @@ import java.util.HashSet;
  * expression implementations, it's just something we've chosen to add. '\d' is,
  * however, standard and that should work as you've learned from lecture.
  *
- * @author
+ * @author Jessica Yang
  *
  *
  * */
@@ -102,7 +99,30 @@ public class NFA {
          * return an empty Set. */
         public Set<State> successors(char c) {
             // TODO: Implement this method
-            return new HashSet<State>();
+            Set<State> theseEdges = _edges.get(c);
+
+            boolean contain = _edges.containsKey(c);
+
+            if (!contain) {
+                return new HashSet<State>();
+            }
+            if (c == EPSILON) {
+                LinkedList<State> epsilonSet = new LinkedList<>(theseEdges);
+                Set <State> successorSet = new HashSet<>();
+
+                while (!epsilonSet.isEmpty()) {
+                    State state = epsilonSet.remove();
+                    Set<State> stateEdges = state._edges.get(c);
+                    if(stateEdges != null) {
+                        epsilonSet.addAll(stateEdges);
+                    }
+                    successorSet.add(state);
+                }
+                return successorSet;
+            } else {
+                return theseEdges;
+            }
+
         }
 
         /**
@@ -360,7 +380,31 @@ public class NFA {
      * @return whether or not the string S is accepted by this NFA. */
     public boolean matches(String s) {
         // TODO: write the matching algorithm
-        return true;
+        Set<State> current = new HashSet<>();
+        Set<State> succSet = _startState.successors(EPSILON);
+        Set<State> states = new HashSet<>(succSet);
+        states.add(_startState);
+
+        char[] sArray = s.toCharArray();
+        for (char c: sArray) {
+            for (State state: states) {
+                current.addAll(state.successors(c));
+                for (State sstate: state.successors(c)) {
+                    current.addAll(sstate.successors(EPSILON));
+                }
+            }
+            states = current;
+            current = new HashSet<>();
+        }
+
+
+        boolean ret = false;
+        for (State ssstate: states) {
+            if (ssstate.isAccepting()) {
+                ret = true;
+            }
+        }
+        return ret;
     }
 
     /** Returns the pattern used to make this NFA. */
