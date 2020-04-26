@@ -1,5 +1,7 @@
 package gitlet;
 
+import net.sf.saxon.functions.ConstantFunction;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,26 +14,42 @@ public class Main {
      *  <COMMAND> <OPERAND> .... */
     public static void main(String... args) {
         // FILL THIS IN
-        List<String> commands = Arrays.asList("init", "add");
+        List<String> commands = Arrays.asList("init", "add", "log", "commit"); //fixme; add commands
         if (!commands.contains(args[0])) {
             System.out.println("Please enter a command.");
             System.exit(0);
         }
-        //fixme wrong number of operands?
-        // not in initialized git directory error
+
+        // fixme not in initialized git directory error
         if (args[0] == "init") {
-            init initial = new init();
+            Init initial = new Init();
             initial.init();
         } else if (args[0] == "add") {
-
+            if (checkArgs(args, 2)) {
+                Add add = new Add();
+                add.add(args[1]);
+            } else {
+                System.out.println("Please enter a file to add."); //fixme: not correct terms?
+            }
         } else if (args[0] == "log") {
 
+        } else if (args[0] == "commit") {
+            if (checkArgs(args, 2)) {
+                commit commit = new commit();
+                commit.commit(args[1]);
+            } else {
+                System.out.println("Please enter a commit message.");
+            }
         }
 
         else {
             System.out.println("No command with that name exists.");
             System.exit(0);
         }
+    }
+
+    public static boolean checkArgs(String[] args, int expected) {
+        return args.length == expected;
     }
 
 }

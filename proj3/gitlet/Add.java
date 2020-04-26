@@ -2,7 +2,7 @@ package gitlet;
 
 import java.io.File;
 
-public class add {
+public class Add {
 
     public void add(String fileName) {
         if (!new File(fileName).exists()) {
