@@ -57,13 +57,22 @@ public class Commit implements Serializable {
 
         //clear stage folders (add and remove)
 
-        //for (String fileName : Utils.plainFilenamesIn(".gitlet/stage/add")) {
-        /** for (String fileName : Init.ADD_STAGE.list()) {
-            Utils.restrictedDelete(fileName);
+        //fixme
+        for (String fileName : Init.ADD_STAGE.list()) {
+            /**Blob bruh = Utils.readObject(new File(Init.BLOBS, fileName), Blob.class);
+            File blobFile = new File(Init.BLOBS, fileName);
+            blobFile.createNewFile();
+            Utils.writeObject(blobFile, bruh); **/
+
+            File AddFileToDelete = new File(Init.ADD_STAGE, fileName);
+            AddFileToDelete.delete();
+            //Utils.restrictedDelete(fileName);
         }
         for (String fileName : Utils.plainFilenamesIn(".gitlet/stage/remove")) {
-            Utils.restrictedDelete(fileName);
-        }**/
+            //Utils.restrictedDelete(fileName);
+            File RemoveFileToDelete = new File(Init.REMOVE_STAGE, fileName);
+            RemoveFileToDelete.delete();
+        }
 
 
     }
