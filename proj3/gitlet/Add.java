@@ -13,15 +13,16 @@ public class Add {
         }
 
         Blob toAdd = new Blob(fileName);
-        File addFile = new File(".gitlet/stage/add/" + fileName);
+        File addFile = new File(Init.ADD_STAGE, fileName);
 
-        File removeFile = new File(".gitlet/stage/remove/" +fileName);
+        File removeFile = new File(Init.REMOVE_STAGE, fileName);
         if (removeFile.exists()) {
             // if in remove folder, take out of remove folder
             Utils.restrictedDelete(removeFile);
-        } else {
+        } //else {
             if (addFile.exists()) {
                 //already exists: overwrite
+
                 Utils.writeObject(addFile, toAdd);
 
             } else {
@@ -31,17 +32,36 @@ public class Add {
                 HashMap<String, Blob> blobMaps = last.getBlob();
                 Blob previousVersionBlob = blobMaps.get(fileName);
 
-                if (previousVersionBlob == null || !previousVersionBlob.equals(toAdd)) {
+                //new below
+                if (previousVersionBlob == null ) {
+                    addFile.createNewFile();
+                    Utils.writeObject(addFile, toAdd); //adds object to add stage
+                } else {
+                    byte[] toAddData = toAdd.getData(); //fixme new
+                    byte[] previousData = previousVersionBlob.getData(); //fixme new
+                    if (!previousData.equals(toAddData)) {
+                        addFile.createNewFile();
+                        Utils.writeObject(addFile, toAdd); //adds object to add stage
+                    } else {
+                        if (addFile.exists()) {
+                            Utils.restrictedDelete(addFile); //deletes from add stage if it's already there
+                        }
+                    }
+                }
+
+
+
+                /**if (previousVersionBlob == null || !previousVersionBlob.equals(toAdd)) {
                     addFile.createNewFile();
                     Utils.writeObject(addFile, toAdd); //adds object to add stage
                 } else {
                     if (addFile.exists()) {
                         Utils.restrictedDelete(addFile); //deletes from add stage if it's already there
                     }
-                }
+                } **/
 
             }
-        }
+        //}
     }
 
 

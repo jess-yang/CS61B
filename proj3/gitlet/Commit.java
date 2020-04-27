@@ -15,7 +15,7 @@ public class Commit implements Serializable {
         _message = "initial commit";
         _time = new SimpleDateFormat("E MMM d HH:mm:ss y Z")
                 .format(new Date());
-        _parent = null;
+        //_parent = null;
         _parentsha1 = null;
         _blob = new HashMap<String, Blob>();
 
@@ -28,7 +28,7 @@ public class Commit implements Serializable {
         _message = message;
         _time = new SimpleDateFormat("E MMM d HH:mm:ss y Z")
                 .format(new Date());
-        _parent = findPreviousCommit();
+        //_parent = findPreviousCommit();
         _parentsha1 = findPreviousCommit()._sha1;
         _blob = updatedBlobs();
         _sha1 = Utils.sha1(Utils.serialize(this));
@@ -50,26 +50,27 @@ public class Commit implements Serializable {
         Utils.writeObject(newCommit,this);
 
 
-
         // change branch content to be this ID
         String head = Utils.readContentsAsString(new File(".gitlet/head"));
         File thisBranch = new File(".gitlet/branches/" + head);
         Utils.writeContents(thisBranch, this._sha1);
 
         //clear stage folders (add and remove)
-        for (String fileName : Utils.plainFilenamesIn(".gitlet/stage/add")) {
+
+        //for (String fileName : Utils.plainFilenamesIn(".gitlet/stage/add")) {
+        /** for (String fileName : Init.ADD_STAGE.list()) {
             Utils.restrictedDelete(fileName);
         }
         for (String fileName : Utils.plainFilenamesIn(".gitlet/stage/remove")) {
             Utils.restrictedDelete(fileName);
-        }
+        }**/
 
 
     }
 
     /**Returns an updated HashMap with Key/Blob pairs that we are currently keeping track of. */
     public HashMap<String, Blob> updatedBlobs() {
-        HashMap<String, Blob> ret = deepCopy(_parent._blob);
+        HashMap<String, Blob> ret = deepCopy(getParent()._blob);
         for (String addFileName : Utils.plainFilenamesIn(".gitlet/stage/add")) {
             ret.put(addFileName, Utils.readObject(new File(".gitlet/stage/add/" + addFileName), Blob.class));
         }
@@ -111,6 +112,12 @@ public class Commit implements Serializable {
 
     /** Get method for parent.**/
     public Commit getParent() {
+        String parentSha1 = getParentSHA1();
+        if (parentSha1 == null) {
+            return null;
+        }
+        File parentFile = new File(Init.COMMITS, parentSha1);
+        Commit _parent = Utils.readObject(parentFile, Commit.class);
         return _parent;
     }
 
