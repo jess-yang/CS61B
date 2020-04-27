@@ -1,5 +1,6 @@
 package gitlet;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class Main {
 
     /** Usage: java gitlet.Main ARGS, where ARGS contains
      *  <COMMAND> <OPERAND> .... */
-    public static void main(String... args) {
+    public static void main(String... args) throws IOException {
         // FILL THIS IN
         List<String> commands = Arrays.asList("init", "add", "log", "commit"); //fixme; add commands
         if (!commands.contains(args[0])) {
@@ -33,10 +34,11 @@ public class Main {
 
         } else if (args[0] == "commit") {
             if (checkArgs(args, 2)) {
-                //Commit commit = new Commit();
+                Commit commit = new Commit(args[1]);
                 //commit.commit(args[1]);
             } else {
                 System.out.println("Please enter a commit message.");
+                System.exit(0);
             }
         }
 
