@@ -1,8 +1,11 @@
 package gitlet;
 
+
 import java.io.File;
+import java.sql.Blob;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class Init {
     public void init() {
@@ -18,8 +21,7 @@ public class Init {
         new File(".gitlet/commits").mkdir();
         new File(".gitlet/stage").mkdir();
 
-        String time = new SimpleDateFormat("hh:mm:ss z, EEE d MMM yyyy").format(new Date(0));
-        String sha = Utils.sha1();
+
 
 
 

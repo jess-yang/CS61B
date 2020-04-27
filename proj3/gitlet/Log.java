@@ -1,6 +1,6 @@
 package gitlet;
 
-public class log {
+public class Log {
 
     public void log() {
 

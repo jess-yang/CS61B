@@ -1,7 +1,5 @@
 package gitlet;
 
-import net.sf.saxon.functions.ConstantFunction;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,8 +33,8 @@ public class Main {
 
         } else if (args[0] == "commit") {
             if (checkArgs(args, 2)) {
-                commit commit = new commit();
-                commit.commit(args[1]);
+                //Commit commit = new Commit();
+                //commit.commit(args[1]);
             } else {
                 System.out.println("Please enter a commit message.");
             }
