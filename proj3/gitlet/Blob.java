@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 public class Blob implements Serializable {
 
+    /** Blob constructor from a name. */
     public Blob (String name) {
         _name = name;
         _data = Utils.readContents(new File(name));

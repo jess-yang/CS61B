@@ -13,7 +13,6 @@ public class Add {
         }
 
         Blob toAdd = new Blob(fileName);
-        //String sha1 = toAdd.getSha1();
         File addFile = new File(".gitlet/stage/add/" + fileName);
 
         File removeFile = new File(".gitlet/stage/remove/" +fileName);
@@ -32,7 +31,7 @@ public class Add {
                 HashMap<String, Blob> blobMaps = last.getBlob();
                 Blob previousVersionBlob = blobMaps.get(fileName);
 
-                if (!previousVersionBlob.equals(toAdd)) {
+                if (previousVersionBlob == null || !previousVersionBlob.equals(toAdd)) {
                     addFile.createNewFile();
                     Utils.writeObject(addFile, toAdd); //adds object to add stage
                 } else {

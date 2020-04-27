@@ -10,9 +10,9 @@ import java.util.HashMap;
 
 public class Commit implements Serializable {
 
-
-    public Commit(){
-        _message = "initial message";
+    /**Initial Commit constructor. _parent is null, and _blob is an empty HashMap. */
+    public Commit() {
+        _message = "initial commit";
         _time = new SimpleDateFormat("E MMM d HH:mm:ss y Z")
                 .format(new Date());
         _parent = null;
@@ -21,7 +21,9 @@ public class Commit implements Serializable {
 
         _sha1 = Utils.sha1(Utils.serialize(this));
     }
-    
+
+
+    /** Commit constructor. */
     public Commit(String message) {
         _message = message;
         _time = new SimpleDateFormat("E MMM d HH:mm:ss y Z")
@@ -34,8 +36,10 @@ public class Commit implements Serializable {
 
     }
 
+    /** The action of committing something. */
     public void commitAction() throws IOException {
-        if (new File(".gitlet/stage/add").length() == 0) {
+        //if (new File(".gitlet/stage/add").length() == 0) {
+        if (Init.ADD_STAGE.length() == 0) {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
@@ -44,6 +48,8 @@ public class Commit implements Serializable {
         File newCommit = new File(".gitlet/commits/" + _sha1);
         newCommit.createNewFile();
         Utils.writeObject(newCommit,this);
+
+
 
         // change branch content to be this ID
         String head = Utils.readContentsAsString(new File(".gitlet/head"));
@@ -86,10 +92,8 @@ public class Commit implements Serializable {
     /** Static method for finding the previous commit, according to head commit. **/
     public static Commit findPreviousCommit() {
         String headBranch = Utils.readContentsAsString(new File(".gitlet/head"));
-        System.out.println("head " + headBranch); //fixme
-        String headCommitinBranch = Utils.readContentsAsString(new File(".gitlet/branches/"+headBranch));
-        System.out.println("headcommit" + headCommitinBranch); //fixme
-        Commit lastCommit = Utils.readObject(new File(".gitlet/commits/"+headCommitinBranch), Commit.class);
+        String headCommitinBranch = Utils.readContentsAsString(new File(".gitlet/branches/" + headBranch));
+        Commit lastCommit = Utils.readObject(new File(".gitlet/commits/" + headCommitinBranch), Commit.class);
 
         return lastCommit;
 
@@ -103,6 +107,26 @@ public class Commit implements Serializable {
     /** Get method for SHA1 code. **/
     public String getSHA1() {
         return _sha1;
+    }
+
+    /** Get method for parent.**/
+    public Commit getParent() {
+        return _parent;
+    }
+
+    /** Get method for parent's SHA1 code.**/
+    public String getParentSHA1() {
+        return _parentsha1;
+    }
+
+    /** Get method for time.**/
+    public String getTime() {
+        return _time;
+    }
+
+    /** Get method for message.**/
+    public String getMessage() {
+        return _message;
     }
 
 
