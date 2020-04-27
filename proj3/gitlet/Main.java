@@ -18,21 +18,20 @@ public class Main {
             System.out.println("Please enter a command.");
             System.exit(0);
         }
-
-        // fixme not in initialized git directory error
-        if (args[0] == "init") {
+        // fixme: not in initialized git directory error
+        if (args[0].equals("init")) {
             Init initial = new Init();
             initial.init();
-        } else if (args[0] == "add") {
+        } else if (args[0].equals("add")) {
             if (checkArgs(args, 2)) {
                 Add add = new Add();
                 add.add(args[1]);
             } else {
                 System.out.println("Please enter a file to add."); //fixme: not correct terms?
             }
-        } else if (args[0] == "log") {
+        } else if (args[0].equals("log")) {
 
-        } else if (args[0] == "commit") {
+        } else if (args[0].equals("commit")) {
             if (checkArgs(args, 2)) {
                 Commit commit = new Commit(args[1]);
                 //commit.commit(args[1]);
@@ -40,9 +39,7 @@ public class Main {
                 System.out.println("Please enter a commit message.");
                 System.exit(0);
             }
-        }
-
-        else {
+        } else {
             System.out.println("No command with that name exists.");
             System.exit(0);
         }
