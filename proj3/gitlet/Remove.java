@@ -15,12 +15,16 @@ public class Remove {
             System.exit(0);
         } else if (toRemoveFromAdd.exists()) {
             toRemoveFromAdd.delete();
-        } else if(last.getBlob().get(name) != null) {
-            Blob addTo = new Blob(name);
+        } else if(last.getBlob().containsKey(name)) {
+            Blob addTo = Utils.readObject(new File(Init.BLOBS, name), Blob.class);
             File addToRemove = new File(Init.REMOVE_STAGE, name);
-            addToRemove.createNewFile();
-            Utils.writeObject(addToRemove, addTo);
-            Utils.restrictedDelete(name); // removes from CWD
+            addToRemove.createNewFile(); //fixme
+            Utils.writeObject(addToRemove, addTo); //fixme
+            File fileName = new File(Checkout.CWD, name); //check if user already deleted?
+            if (fileName.exists()) { //check if user already deleted?
+                Utils.restrictedDelete(name);
+            }
+
         }
 
     }

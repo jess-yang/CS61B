@@ -8,7 +8,8 @@ public class Blob implements Serializable {
     /** Blob constructor from a name. */
     public Blob (String name) {
         _name = name;
-        _data = Utils.readContents(new File(name));
+        File blobContent = new File(Checkout.CWD, name);
+        _data = Utils.readContentsAsString(blobContent);
         _sha1 = Utils.sha1(_data);
     }
 
@@ -20,7 +21,7 @@ public class Blob implements Serializable {
         return _sha1;
     }
 
-    public byte[] getData() {
+    public String getData() {
         return _data;
     }
 
@@ -28,5 +29,5 @@ public class Blob implements Serializable {
 
     private String _name;
     private String _sha1;
-    private byte[] _data;
+    private String _data;
 }

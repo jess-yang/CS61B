@@ -11,20 +11,16 @@ public class Add {
             System.out.println("File does not exist.");
             System.exit(0);
         }
-
-        Blob toAdd = new Blob(fileName);
-        File addFile = new File(Init.ADD_STAGE, fileName);
-
         File removeFile = new File(Init.REMOVE_STAGE, fileName);
         if (removeFile.exists()) {
             // if in remove folder, take out of remove folder
-            Utils.restrictedDelete(removeFile);
-        } //else {
-            if (addFile.exists()) {
-                //already exists: overwrite
+            removeFile.delete();
+        } else {
+            Blob toAdd = new Blob(fileName);
+            File addFile = new File(Init.ADD_STAGE, fileName);
 
+            if (addFile.exists()) { //already exists: overwrite
                 Utils.writeObject(addFile, toAdd);
-
             } else {
                 //if it doesn't exist, compare to previous version.
 
@@ -32,14 +28,12 @@ public class Add {
                 HashMap<String, Blob> blobMaps = last.getBlob();
                 Blob previousVersionBlob = blobMaps.get(fileName);
 
-                //new below
-                if (previousVersionBlob == null ) {
+                if (previousVersionBlob == null) { //if blob doesn't exist in past commit
                     addFile.createNewFile();
                     Utils.writeObject(addFile, toAdd); //adds object to add stage
                 } else {
-                    byte[] toAddData = toAdd.getData(); //fixme new
-                    byte[] previousData = previousVersionBlob.getData(); //fixme new
-                    if (!previousData.equals(toAddData)) {
+                    Blob prev = Utils.readObject(new File(Init.BLOBS, fileName), Blob.class);
+                    if (!prev.getData().equals(toAdd.getData())) {
                         addFile.createNewFile();
                         Utils.writeObject(addFile, toAdd); //adds object to add stage
                     } else {
@@ -61,7 +55,7 @@ public class Add {
                 } **/
 
             }
-        //}
+        }
     }
 
 

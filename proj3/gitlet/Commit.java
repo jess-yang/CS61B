@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class Commit implements Serializable {
 
@@ -39,11 +40,30 @@ public class Commit implements Serializable {
     /** The action of committing something. */
     public void commitAction() throws IOException {
         //if (new File(".gitlet/stage/add").length() == 0) {
-        if (Init.ADD_STAGE.length() == 0) {
+        List fileList = Utils.plainFilenamesIn(Init.ADD_STAGE);
+        if (fileList.size() == 0) {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
 
+        // add to commit folder
+        File newCommit = new File(".gitlet/commits/" + _sha1);
+        newCommit.createNewFile();
+        Utils.writeObject(newCommit,this);
+
+        //uploads Blobs.
+        uploadBlobs();
+
+        // change branch content to be this ID
+        String head = Utils.readContentsAsString(new File(".gitlet/head"));
+        File thisBranch = new File(".gitlet/branches/" + head);
+        Utils.writeContents(thisBranch, this._sha1);
+
+        //clear stage folders (add and remove)
+        clearStagingArea();
+    }
+
+    public void firstCommitAction() throws IOException {
         // add to commit folder
         File newCommit = new File(".gitlet/commits/" + _sha1);
         newCommit.createNewFile();
@@ -54,11 +74,6 @@ public class Commit implements Serializable {
         String head = Utils.readContentsAsString(new File(".gitlet/head"));
         File thisBranch = new File(".gitlet/branches/" + head);
         Utils.writeContents(thisBranch, this._sha1);
-
-        //clear stage folders (add and remove)
-        clearStagingArea();
-
-
     }
 
     /**Returns an updated HashMap with Key/Blob pairs that we are currently keeping track of. */
@@ -73,16 +88,19 @@ public class Commit implements Serializable {
 
         return ret;
     }
+    /** saves blobs to BLOBS dir. */
+    public static void uploadBlobs() {
+        //fixme: upload blobs?
+        for (String fileName : Init.ADD_STAGE.list()) {
+            Blob currBlob= Utils.readObject(new File(".gitlet/stage/add/" + fileName), Blob.class);
+            Utils.writeObject(new File(Init.BLOBS,fileName), currBlob);
+        }
+    }
 
     /** Clears staging area.*/
     public static void clearStagingArea() {
-        //fixme
+        //fixme: upload blobs?
         for (String fileName : Init.ADD_STAGE.list()) {
-            /**Blob bruh = Utils.readObject(new File(Init.BLOBS, fileName), Blob.class);
-             File blobFile = new File(Init.BLOBS, fileName);
-             blobFile.createNewFile();
-             Utils.writeObject(blobFile, bruh); **/
-
             File AddFileToDelete = new File(Init.ADD_STAGE, fileName);
             AddFileToDelete.delete();
         }
@@ -92,6 +110,7 @@ public class Commit implements Serializable {
         }
 
     }
+
 
     /** Makes a deep copy of the HashMap for the purpose of updating tracked files.*/
     public HashMap<String, Blob> deepCopy(HashMap<String, Blob> original) {

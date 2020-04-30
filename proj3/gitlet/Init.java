@@ -63,7 +63,7 @@ public class Init {
 
         Utils.writeContents(branchFile, initial.getSHA1());
 
-        initial.commitAction();
+        initial.firstCommitAction(); //fixme changed methods
 
     }
 

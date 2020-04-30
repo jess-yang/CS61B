@@ -31,7 +31,7 @@ public class Main {
             Log.log();
 
         } else if (args[0].equals("commit")) {
-            if (args.length == 2) {
+            if (args.length == 2 && !args[1].equals("")) {
                 Commit commit = new Commit(args[1]);
                 commit.commitAction();
             } else {
