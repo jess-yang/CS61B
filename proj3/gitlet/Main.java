@@ -14,8 +14,11 @@ public class Main {
     public static void main(String... args) throws IOException {
         List<String> commands = Arrays.asList("init", "add", "log", "commit", "checkout", "rm", "global-log",
                 "find", "status", "branch", "rm-branch", "reset"); //fixme; add commands
-        if (!commands.contains(args[0])) {
+        if (args.length == 0) {
             System.out.println("Please enter a command.");
+            System.exit(0);
+        }else if (!commands.contains(args[0])) {
+            System.out.println("No command with that name exists.");
             System.exit(0);
         }
         // fixme: not in initialized git directory error-- check for .gitlet folder?
@@ -41,10 +44,13 @@ public class Main {
         } else if (args[0].equals("checkout")) {
             if (args.length == 2) {
                 Checkout.Checkout(args[1], true);
-            } else if (args.length == 3) {
+            } else if (args.length == 3 && args[1].equals("--")) {
                 Checkout.Checkout(args[2]);
-            } else if (args.length == 4) {
+            } else if (args.length == 4 && args[2].equals("--")) {
                 Checkout.Checkout(args[1], args[3]);
+            } else {
+                System.out.println("Incorrect operands.");
+                System.exit(0);
             }
         } else if (args[0].equals("rm")) {
             if (args.length == 2) {
@@ -73,10 +79,6 @@ public class Main {
             Remove.removeBranch(args[1]);
         } else if (args[0].equals("reset") && args.length == 2) {
             Reset.reset(args[1]);
-        }
-        else {
-            System.out.println("No command with that name exists.");
-            System.exit(0);
         }
     }
 

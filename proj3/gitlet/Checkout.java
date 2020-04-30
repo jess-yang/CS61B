@@ -30,7 +30,8 @@ public class Checkout {
 
     public static void Checkout(String commitID, String fileName) throws IOException {
         File desiredCommit = new File(Init.COMMITS, commitID);
-        if (desiredCommit == null) { // check for wrong ID
+        if (!desiredCommit.exists()) { // check for wrong ID
+            //System.out.println("flag2"); //fixme
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
@@ -40,6 +41,7 @@ public class Checkout {
 
         // if file does not exist
         if (wantedVersion == null) {
+            //System.out.println("flag1"); //fixme
             System.out.println("File does not exist in that commit.");
             System.exit(0);
         } else {
@@ -57,11 +59,13 @@ public class Checkout {
 
     public static void Checkout(String branch, boolean isBranch) throws IOException {
         File branchFile = new File(Init.BRANCHES, branch);
+
         String currentBranch = Utils.readContentsAsString(Init.HEAD);
         if (!branchFile.exists()) {
             System.out.println("No such branch exists.");
             System.exit(0);
-        } else if (branchFile.equals(currentBranch)) {
+        }
+        if (branch.equals(currentBranch)) {
             System.out.println("No need to checkout the current branch.");
         }
         Commit oldHeadCommit = Commit.findPreviousCommit();

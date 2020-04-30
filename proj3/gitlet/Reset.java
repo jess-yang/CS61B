@@ -10,6 +10,7 @@ public class Reset {
         File commitFile = new File(Init.COMMITS, commitID);
         if (!commitFile.exists()) {
             System.out.println("No commit with that id exists.");
+            System.exit(0);
         }
         Commit oldHeadCommit = Commit.findPreviousCommit();
         HashMap<String, Blob> oldBlobs = oldHeadCommit.getBlob();

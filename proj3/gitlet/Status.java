@@ -1,6 +1,7 @@
 package gitlet;
 
 public class Status {
+
     public static void status() {
         System.out.println("=== Branches ===");
         for (String branches : Utils.plainFilenamesIn(Init.BRANCHES)) {
