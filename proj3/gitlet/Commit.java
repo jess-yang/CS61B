@@ -56,23 +56,7 @@ public class Commit implements Serializable {
         Utils.writeContents(thisBranch, this._sha1);
 
         //clear stage folders (add and remove)
-
-        //fixme
-        for (String fileName : Init.ADD_STAGE.list()) {
-            /**Blob bruh = Utils.readObject(new File(Init.BLOBS, fileName), Blob.class);
-            File blobFile = new File(Init.BLOBS, fileName);
-            blobFile.createNewFile();
-            Utils.writeObject(blobFile, bruh); **/
-
-            File AddFileToDelete = new File(Init.ADD_STAGE, fileName);
-            AddFileToDelete.delete();
-            //Utils.restrictedDelete(fileName);
-        }
-        for (String fileName : Utils.plainFilenamesIn(".gitlet/stage/remove")) {
-            //Utils.restrictedDelete(fileName);
-            File RemoveFileToDelete = new File(Init.REMOVE_STAGE, fileName);
-            RemoveFileToDelete.delete();
-        }
+        clearStagingArea();
 
 
     }
@@ -90,6 +74,25 @@ public class Commit implements Serializable {
         return ret;
     }
 
+    /** Clears staging area.*/
+    public static void clearStagingArea() {
+        //fixme
+        for (String fileName : Init.ADD_STAGE.list()) {
+            /**Blob bruh = Utils.readObject(new File(Init.BLOBS, fileName), Blob.class);
+             File blobFile = new File(Init.BLOBS, fileName);
+             blobFile.createNewFile();
+             Utils.writeObject(blobFile, bruh); **/
+
+            File AddFileToDelete = new File(Init.ADD_STAGE, fileName);
+            AddFileToDelete.delete();
+        }
+        for (String fileName : Utils.plainFilenamesIn(".gitlet/stage/remove")) {
+            File RemoveFileToDelete = new File(Init.REMOVE_STAGE, fileName);
+            RemoveFileToDelete.delete();
+        }
+
+    }
+
     /** Makes a deep copy of the HashMap for the purpose of updating tracked files.*/
     public HashMap<String, Blob> deepCopy(HashMap<String, Blob> original) {
         HashMap<String, Blob> copy = new HashMap<>();
@@ -98,6 +101,7 @@ public class Commit implements Serializable {
         }
         return copy;
     }
+
 
     /** Static method for finding the previous commit, according to head commit. (Branch is the current one). **/
     public static Commit findPreviousCommit() {

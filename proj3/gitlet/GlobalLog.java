@@ -8,7 +8,6 @@ public class GlobalLog {
         for (String branches : Utils.plainFilenamesIn(Init.BRANCHES)) {
             Commit head = Commit.findHeadCommit(branches);
             Log.log(head);
-
         }
     }
 }

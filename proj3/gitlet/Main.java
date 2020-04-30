@@ -29,8 +29,6 @@ public class Main {
                 System.out.println("Please enter a file to add."); //fixme: not correct terms?
             }
         } else if (args[0].equals("log")) {
-            //Log log = new Log();
-            //log.log();
             Log.log();
 
         } else if (args[0].equals("commit")) {
@@ -64,9 +62,15 @@ public class Main {
                 GlobalLog gloLog = new GlobalLog();
                 gloLog.globalLog();
             }
-
+        } else if (args[0].equals("find")) {
+            if (args.length == 2) {
+                Find.find(args[1]);
+            }
+        } else if (args[0].equals("status")) {
+            if (args.length == 1) {
+                Status.status();
+            }
         }
-
         else {
             System.out.println("No command with that name exists.");
             System.exit(0);

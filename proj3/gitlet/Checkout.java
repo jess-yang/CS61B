@@ -53,7 +53,50 @@ public class Checkout {
 
     }
 
-    public void Checkout(String branch, boolean isBranch) {
+    public void Checkout(String branch, boolean isBranch) throws IOException {
+        File branchFile = new File(Init.BRANCHES, branch);
+        String currentBranch = Utils.readContentsAsString(Init.HEAD);
+        if (!branchFile.exists()) {
+            System.out.println("No such branch exists.");
+            System.exit(0);
+        } else if (branchFile.equals(currentBranch)) {
+            System.out.println("No need to checkout the current branch.");
+        }
+        Commit oldHeadCommit = Commit.findPreviousCommit();
+        HashMap<String, Blob> oldBlobs = oldHeadCommit.getBlob();
+
+        Utils.writeContents(Init.HEAD, branch); // branch will now be current head
+
+
+        File headCommitFile  = new File(Init.BRANCHES, branch);
+        String commitID = Utils.readContentsAsString(headCommitFile);
+        Commit headCommit = Utils.readObject(new File(Init.COMMITS, commitID), Commit.class);
+        String headCommitID = headCommit.getSHA1();
+        HashMap<String, Blob> newBlobs = headCommit.getBlob(); //get files from head commit
+
+
+        for (HashMap.Entry<String, Blob> entry : newBlobs.entrySet()){
+
+            String currName = entry.getKey();
+
+            if (!oldBlobs.containsKey(currName)) { //if file is untracked and overwritted, throw error
+                System.out.println("There is an untracked file in the way; " +
+                        "delete it, or add and commit it first.");
+                System.exit(0);
+            }
+
+            Checkout(headCommitID, currName); //put files in working dir
+        }
+
+        //files tracked in current branch but not present in checked out are deleted
+        for (HashMap.Entry<String, Blob> entry : oldBlobs.entrySet()){
+            String fileInOldBlob = entry.getKey();
+            if (!newBlobs.containsKey(fileInOldBlob)) {
+                Utils.restrictedDelete(fileInOldBlob);
+            }
+        }
+
+        Commit.clearStagingArea();  //staging area cleared
 
     }
 

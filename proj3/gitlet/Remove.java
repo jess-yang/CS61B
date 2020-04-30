@@ -20,6 +20,7 @@ public class Remove {
             File addToRemove = new File(Init.REMOVE_STAGE, name);
             addToRemove.createNewFile();
             Utils.writeObject(addToRemove, addTo);
+            Utils.restrictedDelete(name); // removes from CWD
         }
 
 
