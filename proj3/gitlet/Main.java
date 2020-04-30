@@ -29,8 +29,9 @@ public class Main {
                 System.out.println("Please enter a file to add."); //fixme: not correct terms?
             }
         } else if (args[0].equals("log")) {
-            Log log = new Log();
-            log.log();
+            //Log log = new Log();
+            //log.log();
+            Log.log();
 
         } else if (args[0].equals("commit")) {
             if (args.length == 2) {
@@ -52,6 +53,18 @@ public class Main {
                 Checkout checkout = new Checkout();
                 checkout.Checkout(args[1], args[3]);
             }
+        } else if (args[0].equals("rm")) {
+            if (args.length == 2) {
+                Remove remove = new Remove();
+                remove.remove(args[1]);
+            }
+
+        } else if (args[0].equals("global-log")) {
+            if (args.length == 1) {
+                GlobalLog gloLog = new GlobalLog();
+                gloLog.globalLog();
+            }
+
         }
 
         else {

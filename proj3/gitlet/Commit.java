@@ -99,7 +99,7 @@ public class Commit implements Serializable {
         return copy;
     }
 
-    /** Static method for finding the previous commit, according to head commit. **/
+    /** Static method for finding the previous commit, according to head commit. (Branch is the current one). **/
     public static Commit findPreviousCommit() {
         String headBranch = Utils.readContentsAsString(new File(".gitlet/head"));
         String headCommitinBranch = Utils.readContentsAsString(new File(".gitlet/branches/" + headBranch));
@@ -107,6 +107,15 @@ public class Commit implements Serializable {
 
         return lastCommit;
 
+    }
+
+    /** Static method for finding the head commit of a branch with the name of a BRANCHES file. **/
+    public static Commit findHeadCommit(String branch) {
+        File branchFile = new File(Init.BRANCHES, branch);
+        String commitID = Utils.readContentsAsString(branchFile);
+        File commitFile = new File(Init.COMMITS, commitID);
+        Commit headOfBranch = Utils.readObject(commitFile, Commit.class);
+        return headOfBranch;
     }
 
     /** Get method for Blob HashMap. **/
