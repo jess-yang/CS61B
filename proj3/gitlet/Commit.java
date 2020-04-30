@@ -40,8 +40,9 @@ public class Commit implements Serializable {
     /** The action of committing something. */
     public void commitAction() throws IOException {
         //if (new File(".gitlet/stage/add").length() == 0) {
-        List fileList = Utils.plainFilenamesIn(Init.ADD_STAGE);
-        if (fileList.size() == 0) {
+        List addFileList = Utils.plainFilenamesIn(Init.ADD_STAGE);
+        List removeFileList = Utils.plainFilenamesIn(Init.REMOVE_STAGE);
+        if (addFileList.size() == 0 && removeFileList.size() == 0) {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
