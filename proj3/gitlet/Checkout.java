@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class Checkout {
+    //fixme: abbreviated commit id shit?
+    static final File CWD = new File(System.getProperty("user.dir"));
 
-    public void Checkout(String fileName) throws IOException {
+    public static void Checkout(String fileName) throws IOException {
         Commit last = Commit.findPreviousCommit();
         HashMap<String, Blob> lastBlobs = last.getBlob();
         Blob wantedVersion = lastBlobs.get(fileName);
@@ -26,7 +28,7 @@ public class Checkout {
         }
     }
 
-    public void Checkout(String commitID, String fileName) throws IOException {
+    public static void Checkout(String commitID, String fileName) throws IOException {
         File desiredCommit = new File(Init.COMMITS, commitID);
         if (desiredCommit == null) { // check for wrong ID
             System.out.println("No commit with that id exists.");
@@ -53,7 +55,7 @@ public class Checkout {
 
     }
 
-    public void Checkout(String branch, boolean isBranch) throws IOException {
+    public static void Checkout(String branch, boolean isBranch) throws IOException {
         File branchFile = new File(Init.BRANCHES, branch);
         String currentBranch = Utils.readContentsAsString(Init.HEAD);
         if (!branchFile.exists()) {
@@ -78,8 +80,10 @@ public class Checkout {
         for (HashMap.Entry<String, Blob> entry : newBlobs.entrySet()){
 
             String currName = entry.getKey();
-
-            if (!oldBlobs.containsKey(currName)) { //if file is untracked and overwritted, throw error
+            File entryInCWD = new File(CWD, currName);
+            if (!oldBlobs.containsKey(currName) && entryInCWD.exists()) {
+                //check that checkout branch is NOT overwriting something that
+                // 1. exists in current directory AND 2. is untracked.
                 System.out.println("There is an untracked file in the way; " +
                         "delete it, or add and commit it first.");
                 System.exit(0);

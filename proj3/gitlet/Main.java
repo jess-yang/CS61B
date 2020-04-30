@@ -12,7 +12,8 @@ public class Main {
     /** Usage: java gitlet.Main ARGS, where ARGS contains
      *  <COMMAND> <OPERAND> .... */
     public static void main(String... args) throws IOException {
-        List<String> commands = Arrays.asList("init", "add", "log", "commit", "checkout"); //fixme; add commands
+        List<String> commands = Arrays.asList("init", "add", "log", "commit", "checkout", "rm", "global-log",
+                "find", "status", "branch", "rm-branch", "reset"); //fixme; add commands
         if (!commands.contains(args[0])) {
             System.out.println("Please enter a command.");
             System.exit(0);
@@ -25,8 +26,6 @@ public class Main {
             if (args.length == 2) {
                 Add add = new Add();
                 add.add(args[1]);
-            } else {
-                System.out.println("Please enter a file to add."); //fixme: not correct terms?
             }
         } else if (args[0].equals("log")) {
             Log.log();
@@ -41,15 +40,11 @@ public class Main {
             }
         } else if (args[0].equals("checkout")) {
             if (args.length == 2) {
-                Checkout checkout = new Checkout();
-                checkout.Checkout(args[1], true);
+                Checkout.Checkout(args[1], true);
             } else if (args.length == 3) {
-                Checkout checkout = new Checkout();
-                checkout.Checkout(args[2]);
-
+                Checkout.Checkout(args[2]);
             } else if (args.length == 4) {
-                Checkout checkout = new Checkout();
-                checkout.Checkout(args[1], args[3]);
+                Checkout.Checkout(args[1], args[3]);
             }
         } else if (args[0].equals("rm")) {
             if (args.length == 2) {
@@ -70,6 +65,14 @@ public class Main {
             if (args.length == 1) {
                 Status.status();
             }
+        } else if (args[0].equals("branch")) {
+            if (args.length == 2) {
+                Branch.branch(args[1]);
+            }
+        } else if (args[0].equals("rm-branch") && args.length == 2) {
+            Remove.removeBranch(args[1]);
+        } else if (args[0].equals("reset") && args.length == 2) {
+            Reset.reset(args[1]);
         }
         else {
             System.out.println("No command with that name exists.");

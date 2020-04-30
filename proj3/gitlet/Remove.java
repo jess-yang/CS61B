@@ -9,7 +9,7 @@ public class Remove {
         File toRemoveFromAdd = new File(Init.ADD_STAGE, name);
         Commit last = Commit.findPreviousCommit();
 
-        if (!toRemoveFromAdd.exists() || last.getBlob().get(name) == null) {
+        if (!toRemoveFromAdd.exists() && !last.getBlob().containsKey(name)) {
             //error if file not staged for add OR file not exist in the last commit's blob hashmap.
             System.out.println("No reason to remove the file.");
             System.exit(0);
@@ -23,9 +23,17 @@ public class Remove {
             Utils.restrictedDelete(name); // removes from CWD
         }
 
-
-        //actual removal is done in commit.
     }
+    public static void removeBranch(String name) throws IOException {
+        File branchToRemove = new File(Init.BRANCHES, name);
+        if (!branchToRemove.exists()) { //name existence
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        } else if (Utils.readContentsAsString(Init.HEAD).equals(name)) {
+            System.out.println("Cannot remove the current branch.");
+        } else {        //deletes branch in branch folder
 
-
+            branchToRemove.delete();
+        }
+    }
 }

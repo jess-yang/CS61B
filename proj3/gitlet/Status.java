@@ -9,18 +9,21 @@ public class Status {
             }
             System.out.println(branches);
         }
+        System.out.println();
         System.out.println("=== Staged Files ===");
         for (String filesAdd : Utils.plainFilenamesIn(Init.ADD_STAGE)) {
             System.out.println(filesAdd);
         }
-        System.out.println(" === Removed Files ===");
+        System.out.println();
+        System.out.println("=== Removed Files ===");
         for (String filesRem : Utils.plainFilenamesIn(Init.REMOVE_STAGE)) {
             System.out.println(filesRem);
         }
-
+        System.out.println();
 
         //fixme: EC
         System.out.println("=== Modifications Not Staged For Commit ===");
+        System.out.println();
         System.out.println("=== Untracked Files ===");
     }
 }
