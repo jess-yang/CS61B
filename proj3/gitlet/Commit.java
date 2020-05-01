@@ -177,6 +177,17 @@ public class Commit implements Serializable {
         return _parentsha1;
     }
 
+    /** Get method for parent2's SHA1 code.**/
+    public Commit getParent2() {
+        if (_parent2sha1 == null) {
+            return null;
+        }
+        File parentFile = new File(Init.COMMITS, _parent2sha1);
+        Commit _parent2 = Utils.readObject(parentFile, Commit.class);
+        return _parent2;
+
+    }
+
     /** Get method for time.**/
     public String getTime() {
         return _time;
@@ -193,7 +204,7 @@ public class Commit implements Serializable {
     private HashMap<String, Blob> _blob;
     private String _sha1;
     private String _parentsha1;
-    private String _parent2sha1;
+    private String _parent2sha1 = null;
     private Commit _parent;
     private String _branch;
 }

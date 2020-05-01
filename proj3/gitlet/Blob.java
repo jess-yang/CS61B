@@ -15,24 +15,29 @@ public class Blob implements Serializable {
         _sha1 = Utils.sha1(_data);
     }
 
-    /** Getter function for name. */
+    /** Getter function for name.
+     * @return name*/
     public String getName() {
         return _name;
     }
 
-    /** Getter function for blob sha1. */
+    /** Getter function for blob sha1.
+     * @return sha1 */
     public String getSha1() {
         return _sha1;
     }
 
-    /** Getter function for blob data as string. */
+    /** Getter function for blob data as string.
+     * return data*/
     public String getData() {
         return _data;
     }
 
 
-
+    /**Name of blob file. */
     private String _name;
+    /**String sha1 code of blob. */
     private String _sha1;
+    /**String of blob data. */
     private String _data;
 }

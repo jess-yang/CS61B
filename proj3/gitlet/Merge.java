@@ -41,7 +41,7 @@ public class Merge {
                     Utils.writeObject(new File(Init.ADD_STAGE, branchEntry.getKey()), branchEntry.getValue());
                 } else if (modified(branchBlob, currentBlob)) {
                     //fixme scenario3
-                    System.out.println("flag1"); //fixme
+                    //System.out.println("flag1"); //fixme
                     isMerge = true;
                     mergeConflictWrite(currentBlob, branchBlob);
                     Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), currentBlob);
@@ -84,7 +84,7 @@ public class Merge {
                     Utils.restrictedDelete(splitBlob.getName());
                 } else {
                     //fixme scenario2
-                    System.out.println("flag4"); //fixme
+                    //System.out.println("flag4"); //fixme
                     isMerge = true;
                     mergeConflictWrite(currentBlob, branchBlob);
                     Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), currentBlob);
@@ -157,7 +157,25 @@ public class Merge {
             System.exit(0);
         }
     }
-    /**Finds the split point of a branch and the current active branch. */
+    /**Finds the split point of a branch and the current active branch.
+    public static Commit findSplitPoint(String branch) {
+        String currBranch = Utils.readContentsAsString(Init.HEAD);
+        Commit currCommit = Commit.findHeadCommit(currBranch);
+        Commit branchCommit = Commit.findHeadCommit(branch);
+
+        while (currCommit != null) {
+            while (branchCommit != null) {
+                if (currCommit.getSHA1().equals(branchCommit.getSHA1())) {
+                    return currCommit;
+                }
+                branchCommit = branchCommit.getParent();
+            }
+            branchCommit = Commit.findHeadCommit(branch);
+            currCommit = currCommit.getParent();
+        }
+        return null;
+    }*/
+
     public static Commit findSplitPoint(String branch) {
         String currBranch = Utils.readContentsAsString(Init.HEAD);
         Commit currCommit = Commit.findHeadCommit(currBranch);
@@ -175,6 +193,7 @@ public class Merge {
         }
         return null;
     }
+
 
     /**Returns whether or not the contents in two blobs are equal. */
     public static boolean modified(Blob current, Blob branch) {

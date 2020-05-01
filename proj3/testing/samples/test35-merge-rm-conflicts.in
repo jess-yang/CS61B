@@ -1,4 +1,5 @@
-# Create two branches and merge other into master.
+# Create two branches and merge other into master with a conflict caused by
+# a file changed in one and removed in the other.
 > init
 <<<
 D DATE "Date: \w\w\w \w\w\w \d+ \d\d:\d\d:\d\d \d\d\d\d [-+]\d\d\d\d"
@@ -33,13 +34,12 @@ D ARBLINES "(?:(?:.|\n)*(?:\n|\Z)|\A|\Z)"
 <<<
 > checkout other
 <<<
-+ f.txt notwug.txt
-> add f.txt
+> rm f.txt
 <<<
 + k.txt wug3.txt
 > add k.txt
 <<<
-> commit "Add k.txt and modify f.txt"
+> commit "Add k.txt and remove f.txt"
 <<<
 > checkout master
 <<<
@@ -55,7 +55,7 @@ Encountered a merge conflict.
 * g.txt
 = h.txt wug2.txt
 = k.txt wug3.txt
-= f.txt conflict1.txt
+= f.txt conflict2.txt
 > log
 ${COMMIT_LOG}
 ===

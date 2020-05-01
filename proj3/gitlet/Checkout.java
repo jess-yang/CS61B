@@ -29,13 +29,7 @@ public class Checkout {
     }
 
     public static void Checkout(String commitID, String fileName) throws IOException {
-        File desiredCommit = new File(Init.COMMITS, commitID);
-        if (!desiredCommit.exists()) { // check for wrong ID
-            //System.out.println("flag2"); //fixme
-            System.out.println("No commit with that id exists.");
-            System.exit(0);
-        }
-        Commit desired = Utils.readObject(desiredCommit, Commit.class);
+        Commit desired = findCommitID(commitID);
         HashMap<String, Blob> desiredBlobs = desired.getBlobs();
         Blob wantedVersion = desiredBlobs.get(fileName);
 
@@ -106,6 +100,24 @@ public class Checkout {
 
         Commit.clearStagingArea();  //staging area cleared
 
+    }
+
+    public static Commit findCommitID(String commitID) {
+        File desiredCommit = new File(Init.COMMITS, commitID);
+        Commit ret = null;
+        if (!desiredCommit.exists()) { // check for wrong ID
+
+            for (String entry : Utils.plainFilenamesIn(Init.COMMITS) ) {
+                if (entry.contains(commitID)) {
+                    return Utils.readObject(new File(Init.COMMITS, entry), Commit.class);
+                }
+            }
+            System.out.println("No commit with that id exists.");
+            System.exit(0);
+        } else {
+            ret = Utils.readObject(desiredCommit, Commit.class);
+        }
+        return ret;
     }
 
 
