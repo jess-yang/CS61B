@@ -9,13 +9,13 @@ public class Remove {
         File toRemoveFromAdd = new File(Init.ADD_STAGE, name);
         Commit last = Commit.findPreviousCommit();
 
-        if (!toRemoveFromAdd.exists() && !last.getBlob().containsKey(name)) {
+        if (!toRemoveFromAdd.exists() && !last.getBlobs().containsKey(name)) {
             //error if file not staged for add OR file not exist in the last commit's blob hashmap.
             System.out.println("No reason to remove the file.");
             System.exit(0);
         } else if (toRemoveFromAdd.exists()) {
             toRemoveFromAdd.delete();
-        } else if(last.getBlob().containsKey(name)) {
+        } else if(last.getBlobs().containsKey(name)) {
             Blob addTo = Utils.readObject(new File(Init.BLOBS, name), Blob.class);
             File addToRemove = new File(Init.REMOVE_STAGE, name);
             addToRemove.createNewFile(); //fixme

@@ -23,9 +23,8 @@ public class Add {
                 Utils.writeObject(addFile, toAdd);
             } else {
                 //if it doesn't exist, compare to previous version.
-
                 Commit last = Commit.findPreviousCommit();
-                HashMap<String, Blob> blobMaps = last.getBlob();
+                HashMap<String, Blob> blobMaps = last.getBlobs();
                 Blob previousVersionBlob = blobMaps.get(fileName);
 
                 if (previousVersionBlob == null) { //if blob doesn't exist in past commit

@@ -13,10 +13,10 @@ public class Reset {
             System.exit(0);
         }
         Commit oldHeadCommit = Commit.findPreviousCommit();
-        HashMap<String, Blob> oldBlobs = oldHeadCommit.getBlob();
+        HashMap<String, Blob> oldBlobs = oldHeadCommit.getBlobs();
 
         Commit thatCommit = Utils.readObject(commitFile, Commit.class);
-        HashMap<String, Blob> commitBlobs = thatCommit.getBlob();
+        HashMap<String, Blob> commitBlobs = thatCommit.getBlobs();
 
         //branch head becomes this node
         String thisBranch = Utils.readContentsAsString(Init.HEAD);

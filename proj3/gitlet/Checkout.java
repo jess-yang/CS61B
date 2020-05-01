@@ -10,7 +10,7 @@ public class Checkout {
 
     public static void Checkout(String fileName) throws IOException {
         Commit last = Commit.findPreviousCommit();
-        HashMap<String, Blob> lastBlobs = last.getBlob();
+        HashMap<String, Blob> lastBlobs = last.getBlobs();
         Blob wantedVersion = lastBlobs.get(fileName);
         // if file does not exist
         if (wantedVersion == null) {
@@ -36,7 +36,7 @@ public class Checkout {
             System.exit(0);
         }
         Commit desired = Utils.readObject(desiredCommit, Commit.class);
-        HashMap<String, Blob> desiredBlobs = desired.getBlob();
+        HashMap<String, Blob> desiredBlobs = desired.getBlobs();
         Blob wantedVersion = desiredBlobs.get(fileName);
 
         // if file does not exist
@@ -69,7 +69,7 @@ public class Checkout {
             System.out.println("No need to checkout the current branch.");
         }
         Commit oldHeadCommit = Commit.findPreviousCommit();
-        HashMap<String, Blob> oldBlobs = oldHeadCommit.getBlob();
+        HashMap<String, Blob> oldBlobs = oldHeadCommit.getBlobs();
 
         Utils.writeContents(Init.HEAD, branch); // branch will now be current head
 
@@ -78,7 +78,7 @@ public class Checkout {
         String commitID = Utils.readContentsAsString(headCommitFile);
         Commit headCommit = Utils.readObject(new File(Init.COMMITS, commitID), Commit.class);
         String headCommitID = headCommit.getSHA1();
-        HashMap<String, Blob> newBlobs = headCommit.getBlob(); //get files from head commit
+        HashMap<String, Blob> newBlobs = headCommit.getBlobs(); //get files from head commit
 
 
         for (HashMap.Entry<String, Blob> entry : newBlobs.entrySet()){

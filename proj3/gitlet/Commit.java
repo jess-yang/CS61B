@@ -23,6 +23,17 @@ public class Commit implements Serializable {
         _sha1 = Utils.sha1(Utils.serialize(this));
     }
 
+    /**Merge conflict constructor. */
+    public Commit(Commit parent1, Commit parent2, String message) {
+        _message = message;
+        _time = new SimpleDateFormat("E MMM d HH:mm:ss y Z")
+                .format(new Date());
+        _parentsha1 = parent1._sha1;
+        _parent2sha1 = parent2._sha1;
+
+        _blob = updatedBlobs();
+        _sha1 = Utils.sha1(Utils.serialize(this));
+    }
 
     /** Commit constructor. */
     public Commit(String message) {
@@ -33,8 +44,6 @@ public class Commit implements Serializable {
         _parentsha1 = findPreviousCommit()._sha1;
         _blob = updatedBlobs();
         _sha1 = Utils.sha1(Utils.serialize(this));
-
-
     }
 
     /** The action of committing something. */
@@ -143,7 +152,7 @@ public class Commit implements Serializable {
     }
 
     /** Get method for Blob HashMap. **/
-    public HashMap<String, Blob> getBlob() {
+    public HashMap<String, Blob> getBlobs() {
         return _blob;
     }
 
@@ -184,6 +193,7 @@ public class Commit implements Serializable {
     private HashMap<String, Blob> _blob;
     private String _sha1;
     private String _parentsha1;
+    private String _parent2sha1;
     private Commit _parent;
     private String _branch;
 }
