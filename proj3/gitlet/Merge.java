@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class Merge {
                     //System.out.println("flag1"); //fixme
                     isMerge = true;
                     mergeConflictWrite(currentBlob, branchBlob);
-                    Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), currentBlob);
+                    Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), merged);
                 }
             } else if (currentBlob == null) {
                 if (modified(splitBlob, branchBlob)) {
@@ -64,7 +66,7 @@ public class Merge {
                     //System.out.println("flag3"); //fixme
                     isMerge = true;
                     mergeConflictWrite(currentBlob, branchBlob);
-                    Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), currentBlob);
+                    Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), merged);
                 }
 
             }
@@ -87,7 +89,7 @@ public class Merge {
                     //System.out.println("flag4"); //fixme
                     isMerge = true;
                     mergeConflictWrite(currentBlob, branchBlob);
-                    Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), currentBlob);
+                    Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), merged);
                 }
             }
         }
@@ -95,7 +97,6 @@ public class Merge {
             Commit mergeCommit = new Commit("Merged "+ branch +" into "+currBranch+".");
             mergeCommit.commitAction();
         } else {
-            //fixme: merge conflict commit
             Commit mergeCommit = new Commit(currHead, branchHead,
                     "Merged "+ branch +" into "+currBranch+".");
             mergeCommit.commitAction();
@@ -157,25 +158,7 @@ public class Merge {
             System.exit(0);
         }
     }
-    /**Finds the split point of a branch and the current active branch.
-    public static Commit findSplitPoint(String branch) {
-        String currBranch = Utils.readContentsAsString(Init.HEAD);
-        Commit currCommit = Commit.findHeadCommit(currBranch);
-        Commit branchCommit = Commit.findHeadCommit(branch);
-
-        while (currCommit != null) {
-            while (branchCommit != null) {
-                if (currCommit.getSHA1().equals(branchCommit.getSHA1())) {
-                    return currCommit;
-                }
-                branchCommit = branchCommit.getParent();
-            }
-            branchCommit = Commit.findHeadCommit(branch);
-            currCommit = currCommit.getParent();
-        }
-        return null;
-    }*/
-
+    /**Finds the split point of a branch and the current active branch.*/
     public static Commit findSplitPoint(String branch) {
         String currBranch = Utils.readContentsAsString(Init.HEAD);
         Commit currCommit = Commit.findHeadCommit(currBranch);
@@ -193,6 +176,55 @@ public class Merge {
         }
         return null;
     }
+
+    /**public static Commit findSplitPoint(String branch) {
+        String currBranch = Utils.readContentsAsString(Init.HEAD);
+        Commit currCommit = Commit.findHeadCommit(currBranch);
+        Commit branchCommit = Commit.findHeadCommit(branch);
+        List<String> branchParents = new ArrayList<>();
+        while (branchCommit != null) {
+            branchParents.add(branchCommit.getSHA1());
+        }
+        HashMap<String, Integer> distances = splitHelper(currCommit, new HashMap<String, Integer>());
+        while (distances.size() != 0 ) {
+            String minHash = findMin(distances);
+            if (branchParents.contains(minHash)) {
+                return Utils.readObject(new File(Init.COMMITS, minHash), Commit.class);
+            }
+            distances.remove(minHash);
+        }
+        return null;
+    }
+
+    public static HashMap<String, Integer> splitHelper(Commit head, HashMap<String, Integer> distances) {
+        int distance = 0;
+        if (head == null) {
+            return distances;
+        }
+        while(head != null) {
+            distances.put(head.getSHA1(), distance);
+            distance++;
+            if (head.getParent2() != null) {
+                System.out.println("flag1");
+                splitHelper(head.getParent2(),distances);
+            }
+            head = head.getParent();
+        }
+        return distances;
+    }
+
+    public static String findMin(HashMap<String, Integer> distances) {
+        int minimum = 100;
+        String minKey= null;
+        for (HashMap.Entry<String, Integer> distancePair : distances.entrySet()){
+            int current = distancePair.getValue();
+            if (current < minimum) {
+                minimum = current;
+                minKey = distancePair.getKey();
+            }
+        }
+        return minKey;
+    } */
 
 
     /**Returns whether or not the contents in two blobs are equal. */

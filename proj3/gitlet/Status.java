@@ -43,18 +43,17 @@ public class Status {
                 if (!inAdd.exists() && !contents.equals(inAddContents)) {
                     System.out.println(entry.getKey() + " (modified)");
                 }
+            } else if (!CWDFile.exists() && inAdd.exists()) {
+                System.out.println(entry.getKey() + " (deleted)");
             }
         }
         for (String fileName : Utils.plainFilenamesIn(Init.ADD_STAGE)) {
             File CWDFile = new File(Checkout.CWD, fileName);
             File inAddFile = new File(Init.ADD_STAGE, fileName);
             String CWDContents = Utils.readContentsAsString(CWDFile);
-            String addContents = Utils.readContentsAsString(inAddFile);
-            if (!CWDContents.equals(addContents)) {
+            String addContents = Utils.readObject(inAddFile, Blob.class).getData();
+            if (CWDFile.exists() && !CWDContents.equals(addContents)) {
                 System.out.println(fileName + " (modified)");
-            }
-            if (!CWDFile.exists()) {
-                System.out.println(fileName + " (deleted)");
             }
         }
 
@@ -69,5 +68,6 @@ public class Status {
                 System.out.println(fileName);
             }
         }
+        System.exit(0);
     }
 }

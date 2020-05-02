@@ -62,4 +62,17 @@ ${COMMIT_LOG}
 commit ${MASTER_HEAD}
 ${ARBLINES}
 <<<*
-#removed status
+> status
+=== Branches ===
+\*master
+other
+
+=== Staged Files ===
+
+=== Removed Files ===
+
+=== Modifications Not Staged For Commit ===
+
+=== Untracked Files ===
+
+<<<*
