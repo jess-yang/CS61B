@@ -3,10 +3,12 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 
-/** Branch class.*/
+/** Branch class.
+ * @author Jessica Yang*/
 public class Branch {
 
-    /** Creates a new branch and adds it to the .gitlet folder.*/
+    /** Creates a new branch and adds it to the .gitlet folder.
+     * @param branchName */
     public static void branch(String branchName) throws IOException {
         String currentBranch = Utils.readContentsAsString(Init.HEAD);
         String headSHA1 = Utils.readContentsAsString(

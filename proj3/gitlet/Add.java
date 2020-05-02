@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-/**Add class for adding a file to the staging area.*/
+/**Add class for adding a file to the staging area.
+ * @author Jessica Yang*/
 public class Add {
 
-    /**Add function for adding a file to the staging area.*/
+    /**Add function for adding a file to the staging area.
+     * @param fileName */
     public void add(String fileName) throws IOException {
         if (!new File(fileName).exists()) {
             System.out.println("File does not exist.");

@@ -2,9 +2,14 @@ package gitlet;
 
 import java.io.File;
 
+/** Class for find.
+ *  @author Jessica Yang
+ */
 public class Find {
+
+    /**Finds a commit based on a commit message.
+     * @param message */
     public static void find(String message) {
-        //iterates through all commits and checks for message equality
         boolean found = false;
         for (String commits : Utils.plainFilenamesIn(Init.COMMITS)) {
             File commitFile = new File(Init.COMMITS, commits);

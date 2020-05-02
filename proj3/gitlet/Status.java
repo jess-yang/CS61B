@@ -3,7 +3,8 @@ package gitlet;
 import java.io.File;
 import java.util.HashMap;
 
-/**Status class that displays the status of gitlet.*/
+/**Status class that displays the status of gitlet.
+ * @author Jessica Yang */
 public class Status {
 
     /**Status method that displays the status of gitlet.*/
@@ -26,41 +27,38 @@ public class Status {
             System.out.println(filesRem);
         }
         System.out.println();
-
         System.out.println("=== Modifications Not Staged For Commit ===");
         Commit current = Commit.findPreviousCommit();
         HashMap<String, Blob> blobs = current.getBlobs();
-        for (HashMap.Entry<String, Blob> entry : blobs.entrySet()){
-            File CWDFile = new File(Checkout.CWD, entry.getKey());
-
+        for (HashMap.Entry<String, Blob> entry : blobs.entrySet()) {
+            File fileCWD = new File(Checkout.CWD, entry.getKey());
             File inAdd = new File(Init.ADD_STAGE, entry.getKey());
             File inRemoval = new File(Init.REMOVE_STAGE, entry.getKey());
-            if(!CWDFile.exists() && !inRemoval.exists()) {
+            if (!fileCWD.exists() && !inRemoval.exists()) {
                 System.out.println(entry.getKey() + " (deleted)");
-            } else if (CWDFile.exists()){
-                String contents = Utils.readContentsAsString(CWDFile);
+            } else if (fileCWD.exists()) {
+                String contents = Utils.readContentsAsString(fileCWD);
                 String inAddContents = entry.getValue().getData();
                 if (!inAdd.exists() && !contents.equals(inAddContents)) {
                     System.out.println(entry.getKey() + " (modified)");
                 }
-            } else if (!CWDFile.exists() && inAdd.exists()) {
+            } else if (!fileCWD.exists() && inAdd.exists()) {
                 System.out.println(entry.getKey() + " (deleted)");
             }
         }
         for (String fileName : Utils.plainFilenamesIn(Init.ADD_STAGE)) {
-            File CWDFile = new File(Checkout.CWD, fileName);
+            File fileCWD = new File(Checkout.CWD, fileName);
             File inAddFile = new File(Init.ADD_STAGE, fileName);
-            String CWDContents = Utils.readContentsAsString(CWDFile);
-            String addContents = Utils.readObject(inAddFile, Blob.class).getData();
-            if (CWDFile.exists() && !CWDContents.equals(addContents)) {
+            String contentsCWD = Utils.readContentsAsString(fileCWD);
+            String addContents =
+                    Utils.readObject(inAddFile, Blob.class).getData();
+            if (fileCWD.exists() && !contentsCWD.equals(addContents)) {
                 System.out.println(fileName + " (modified)");
             }
         }
-
         System.out.println();
-
         System.out.println("=== Untracked Files ===");
-        for(String fileName : Utils.plainFilenamesIn(Checkout.CWD)) {
+        for (String fileName : Utils.plainFilenamesIn(Checkout.CWD)) {
             File inAdd = new File(Init.ADD_STAGE, fileName);
             File inRemove = new File(Init.REMOVE_STAGE, fileName);
             Boolean inCommits = current.getBlobs().containsKey(fileName);

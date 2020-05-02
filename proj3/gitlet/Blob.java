@@ -3,12 +3,13 @@ package gitlet;
 import java.io.File;
 import java.io.Serializable;
 
-/**Blob class that represents an individual file. */
+/**Blob class that represents an individual file.
+ * @author Jessica Yang*/
 public class Blob implements Serializable {
 
     /** Blob constructor from a name.
-     * @param name*/
-    public Blob (String name) {
+     * @param name */
+    public Blob(String name) {
         _name = name;
         File blobContent = new File(Checkout.CWD, name);
         _data = Utils.readContentsAsString(blobContent);
@@ -16,7 +17,7 @@ public class Blob implements Serializable {
     }
 
     /** Getter function for name.
-     * @return name*/
+     * @return name */
     public String getName() {
         return _name;
     }

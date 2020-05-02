@@ -2,16 +2,21 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+
+/** Merge class.
+ *  @author Jessica Yang
+ */
 public class Merge {
+    /** Merge action.
+     * @param branch */
 
     public static void merge(String branch) throws IOException {
-        checkStageArea();//staged files present
-        checkBranchValid(branch);//branch with name exists and isn't itself
+        checkStageArea();
+        checkBranchValid(branch);
         String currBranch = Utils.readContentsAsString(Init.HEAD);
         File branchFile = new File(Init.BRANCHES, branch);
         Commit currHead = Commit.findHeadCommit(currBranch);
@@ -19,93 +24,102 @@ public class Merge {
         HashMap<String, Blob> currBlobs = currHead.getBlobs();
         HashMap<String, Blob> branchBlobs = branchHead.getBlobs();
 
-        boolean isMerge = false;
-
-        Commit splitPoint = findSplitPoint(branch);
+        Commit splitPoint = findSplitPoint(branchHead);
         HashMap<String, Blob> splitBlobs = splitPoint.getBlobs();
 
         if (splitPoint.getSHA1().equals(branchHead.getSHA1())) {
-            System.out.println("Given branch is an ancestor of the current branch.");
+            System.out.println("Given branch is an "
+                    + "ancestor of the current branch.");
             System.exit(0);
-        } else if(splitPoint.getSHA1().equals(currHead.getSHA1())) {
-            Checkout.Checkout(branch, true);
+        } else if (splitPoint.getSHA1().equals(currHead.getSHA1())) {
+            Checkout.checkout(branch, true);
             System.out.println("Current branch fast-forwarded.");
             System.exit(0);
         }
-        for (HashMap.Entry<String, Blob> branchEntry : branchBlobs.entrySet()){
+        blobIterate(currBlobs, branchBlobs, splitBlobs, branchHead);
+        Commit mergeCommit = new Commit(currHead, branchHead,
+                "Merged " + branch + " into " + currBranch + ".");
+        mergeCommit.commitAction();
+        if (isMergeConflict) {
+            System.out.println("Encountered a merge conflict.");
+
+        }
+
+    }
+    /**Main function of merge; iterates through the blobs
+     * and chooses what action to perform.
+     * @param branchHead Head commit of given branch
+     * @param branchBlobs files tracked in blob
+     * @param currBlobs files tracked in active head
+     * @param splitBlobs files tracked at split point*/
+    public static void blobIterate(HashMap<String, Blob> currBlobs,
+                                   HashMap<String, Blob> branchBlobs,
+                                   HashMap<String, Blob> splitBlobs,
+                                   Commit branchHead) throws IOException {
+        for (HashMap.Entry<String, Blob> branchEntry : branchBlobs.entrySet()) {
             Blob currentBlob = currBlobs.get(branchEntry.getKey());
             Blob branchBlob = branchEntry.getValue();
             Blob splitBlob = splitBlobs.get(branchEntry.getKey());
             if (splitBlob == null) {
-                if (currentBlob == null) {//case5
+                if (currentBlob == null) {
                     checkOverwrite(currBlobs, branchEntry.getKey());
-                    Checkout.Checkout(branchHead.getSHA1(), branchEntry.getKey());
-                    Utils.writeObject(new File(Init.ADD_STAGE, branchEntry.getKey()), branchEntry.getValue());
+                    Checkout.checkout(branchHead.getSHA1(),
+                            branchEntry.getKey());
+                    Utils.writeObject(new File(Init.ADD_STAGE,
+                            branchEntry.getKey()), branchEntry.getValue());
                 } else if (modified(branchBlob, currentBlob)) {
-                    //fixme scenario3
-                    //System.out.println("flag1"); //fixme
-                    isMerge = true;
+                    isMergeConflict = true;
                     mergeConflictWrite(currentBlob, branchBlob);
-                    Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), merged);
+                    Utils.writeObject(new File(Init.ADD_STAGE,
+                            currentBlob.getName()), merged);
                 }
             } else if (currentBlob == null) {
                 if (modified(splitBlob, branchBlob)) {
-                    //fixme scenario 2
-                    isMerge = true;
+                    isMergeConflict = true;
                     mergeConflictWrite(currentBlob, branchBlob);
-                    Utils.writeObject(new File(Init.REMOVE_STAGE, branchBlob.getName()), merged);
+                    Utils.writeObject(new File(Init.REMOVE_STAGE,
+                            branchBlob.getName()), merged);
                 }
-            }
-            else if(modified(splitBlob, branchBlob) && !modified(splitBlob, currentBlob)) { //case1
+            } else if (modified(splitBlob, branchBlob)
+                    && !modified(splitBlob, currentBlob)) {
                 checkOverwrite(currBlobs, branchEntry.getKey());
-                Checkout.Checkout(branchHead.getSHA1(), branchEntry.getKey());
-                Utils.writeObject(new File(Init.ADD_STAGE, branchEntry.getKey()), branchEntry.getValue());
-            } else if (modified(splitBlob, branchBlob) && modified(splitBlob, currentBlob)) {
-                //fixme: scenario1 conflict
+                Checkout.checkout(branchHead.getSHA1(), branchEntry.getKey());
+                Utils.writeObject(new File(Init.ADD_STAGE,
+                        branchEntry.getKey()), branchEntry.getValue());
+            } else if (modified(splitBlob, branchBlob)
+                    && modified(splitBlob, currentBlob)) {
                 if (modified(branchBlob, currentBlob)) {
-                    //System.out.println("flag3"); //fixme
-                    isMerge = true;
+                    isMergeConflict = true;
                     mergeConflictWrite(currentBlob, branchBlob);
-                    Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), merged);
+                    Utils.writeObject(new File(Init.ADD_STAGE,
+                            currentBlob.getName()), merged);
                 }
-
             }
         }
-        for (HashMap.Entry<String, Blob> splitEntry : splitBlobs.entrySet()){
+        for (HashMap.Entry<String, Blob> splitEntry : splitBlobs.entrySet()) {
             Blob currentBlob = currBlobs.get(splitEntry.getKey());
             Blob branchBlob = branchBlobs.get(splitEntry.getKey());
             Blob splitBlob = splitEntry.getValue();
-            if (currentBlob == null) {
-                if (branchBlob != null) {
-                    //if(!modified(splitBlob, branchBlob) && currentBlob == null) { //case7
-                }
-            } else if (branchBlob == null) {
-                if (!modified(splitBlob, currentBlob)) { //case6
+            if (branchBlob == null) {
+                if (!modified(splitBlob, currentBlob)) {
                     checkOverwrite(currBlobs, splitBlob.getName());
-                    Utils.writeObject(new File(Init.REMOVE_STAGE, splitBlob.getName()), splitBlob);
+                    Utils.writeObject(new File(Init.REMOVE_STAGE,
+                            splitBlob.getName()), splitBlob);
                     Utils.restrictedDelete(splitBlob.getName());
                 } else {
-                    //fixme scenario2
-                    //System.out.println("flag4"); //fixme
-                    isMerge = true;
+                    isMergeConflict = true;
                     mergeConflictWrite(currentBlob, branchBlob);
-                    Utils.writeObject(new File(Init.ADD_STAGE, currentBlob.getName()), merged);
+                    Utils.writeObject(new File(Init.ADD_STAGE,
+                            currentBlob.getName()), merged);
                 }
             }
         }
-        if (!isMerge) {
-            Commit mergeCommit = new Commit("Merged "+ branch +" into "+currBranch+".");
-            mergeCommit.commitAction();
-        } else {
-            Commit mergeCommit = new Commit(currHead, branchHead,
-                    "Merged "+ branch +" into "+currBranch+".");
-            mergeCommit.commitAction();
-            System.out.println("Encountered a merge conflict.");
-        }
-
     }
 
-    /**Rewrites files due to merge conflict. */
+
+    /**Rewrites files due to merge conflict.
+     * @param branch Blob file from branch
+     * @param current Blob file in the current active branch*/
     public static void mergeConflictWrite(Blob current, Blob branch) {
         String firstHead = "<<<<<<< HEAD\n";
         String middle = "=======\n";
@@ -124,7 +138,7 @@ public class Merge {
         if (branch == null) {
             fileName = current.getName();
         } else {
-           branchData = branch.getData();
+            branchData = branch.getData();
         }
         String message = firstHead + currentData
                 + middle + branchData + close;
@@ -147,7 +161,8 @@ public class Merge {
     }
 
 
-    /**Checks that the branch name is valid and that the branch is not itself. */
+    /**Checks that the branch name is valid and that the branch is not itself.
+     * @param branch name of branch*/
     public static void checkBranchValid(String branch) {
         File branchFile = new File(Init.BRANCHES, branch);
         if (!branchFile.exists()) {
@@ -158,94 +173,73 @@ public class Merge {
             System.exit(0);
         }
     }
-    /**Finds the split point of a branch and the current active branch.*/
-    public static Commit findSplitPoint(String branch) {
+
+    /**Finds the split point.
+     * @return commit of splitpoint
+     * @param branchhead the commit at the head of the branch*/
+    public static Commit findSplitPoint(Commit branchhead) {
         String currBranch = Utils.readContentsAsString(Init.HEAD);
         Commit currCommit = Commit.findHeadCommit(currBranch);
-        Commit branchCommit = Commit.findHeadCommit(branch);
 
-        while (currCommit != null) {
-            while (branchCommit != null) {
-                if (currCommit.getSHA1().equals(branchCommit.getSHA1())) {
-                    return currCommit;
-                }
-                branchCommit = branchCommit.getParent();
+        LinkedList<String> branches = new LinkedList<String>();
+        while (branchhead != null) {
+            branches.add(branchhead.getSHA1());
+            if (branchhead.getParent2() != null) {
+                branches.add(branchhead.getParent2().getSHA1());
             }
-            branchCommit = Commit.findHeadCommit(branch);
-            currCommit = currCommit.getParent();
+            branchhead = branchhead.getParent();
+        }
+
+        LinkedList<Commit> queue = new LinkedList<Commit>();
+        queue.add(currCommit);
+
+        while (queue.size() != 0) {
+            Commit check = queue.poll();
+            if (branches.contains(check.getSHA1())) {
+                return check;
+            }
+            LinkedList<Commit> adjacent = new LinkedList<Commit>();
+            if (check.getParent2() != null) {
+                adjacent.add(currCommit.getParent2());
+                queue.remove(check);
+                queue.add(check.getParent2());
+            }
+            if (check.getParent() != null) {
+                adjacent.add(currCommit.getParent());
+                queue.remove(check);
+                queue.add(check.getParent());
+            }
+
         }
         return null;
     }
 
-    /**public static Commit findSplitPoint(String branch) {
-        String currBranch = Utils.readContentsAsString(Init.HEAD);
-        Commit currCommit = Commit.findHeadCommit(currBranch);
-        Commit branchCommit = Commit.findHeadCommit(branch);
-        List<String> branchParents = new ArrayList<>();
-        while (branchCommit != null) {
-            branchParents.add(branchCommit.getSHA1());
-        }
-        HashMap<String, Integer> distances = splitHelper(currCommit, new HashMap<String, Integer>());
-        while (distances.size() != 0 ) {
-            String minHash = findMin(distances);
-            if (branchParents.contains(minHash)) {
-                return Utils.readObject(new File(Init.COMMITS, minHash), Commit.class);
-            }
-            distances.remove(minHash);
-        }
-        return null;
-    }
-
-    public static HashMap<String, Integer> splitHelper(Commit head, HashMap<String, Integer> distances) {
-        int distance = 0;
-        if (head == null) {
-            return distances;
-        }
-        while(head != null) {
-            distances.put(head.getSHA1(), distance);
-            distance++;
-            if (head.getParent2() != null) {
-                System.out.println("flag1");
-                splitHelper(head.getParent2(),distances);
-            }
-            head = head.getParent();
-        }
-        return distances;
-    }
-
-    public static String findMin(HashMap<String, Integer> distances) {
-        int minimum = 100;
-        String minKey= null;
-        for (HashMap.Entry<String, Integer> distancePair : distances.entrySet()){
-            int current = distancePair.getValue();
-            if (current < minimum) {
-                minimum = current;
-                minKey = distancePair.getKey();
-            }
-        }
-        return minKey;
-    } */
-
-
-    /**Returns whether or not the contents in two blobs are equal. */
+    /**Returns whether or not the contents in two blobs are equal.
+     * @param current current file
+     * @param branch file in branches*/
     public static boolean modified(Blob current, Blob branch) {
         if (!current.getData().equals(branch.getData())) {
             return true;
-        } else {
-            return false;
         }
+        return false;
+
     }
 
-    public static void checkOverwrite(HashMap<String, Blob> blobs, String name) {
+    /**Checks if the merge action will overwrite untracked files.
+     * @param name of file
+     * @param blobs HashMap of current files tracked*/
+    public static void checkOverwrite(HashMap<String, Blob> blobs,
+                                      String name) {
         File entryInCWD = new File(Checkout.CWD, name);
         if (!blobs.containsKey(name) && entryInCWD.exists()) {
-            //check that checkout branch is NOT overwriting something that
-            // 1. exists in current directory AND 2. is untracked.
-            System.out.println("There is an untracked file in the way; " +
-                    "delete it, or add and commit it first.");
+            System.out.println("There is an untracked file in the way; "
+                    + "delete it, or add and commit it first.");
             System.exit(0);
         }
     }
 
+    /**Instance variable for the new blobs after merge.*/
     private static Blob merged;
+    /**Tracks if the merge call is a conflict.*/
+    private static boolean isMergeConflict = false;
 }

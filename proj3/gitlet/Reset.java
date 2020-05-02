@@ -4,8 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+/** Class for reset, which checks out all files in a given commit.
+ *  @author Jessica Yang
+ */
 public class Reset {
 
+    /** Reset method, which checks out files of a certain commit.
+     * @param commitID */
     public static void reset(String commitID) throws IOException {
         File commitFile = new File(Init.COMMITS, commitID);
         if (!commitFile.exists()) {
@@ -40,7 +45,7 @@ public class Reset {
                 System.exit(0);
             }
 
-            Checkout.Checkout(commitID, blobName);
+            Checkout.checkout(commitID, blobName);
         }
 
         Commit.clearStagingArea();
