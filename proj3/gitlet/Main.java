@@ -27,6 +27,34 @@ public class Main {
             System.out.println("Not in an initialized Gitlet directory.");
             System.exit(0);
         }
+        normalCommands(args);
+        remoteCommands(args);
+    }
+
+    /**List of commands for gitlet.*/
+    private static List<String> _commands = Arrays.asList("init", "add", "log",
+            "commit", "checkout", "rm", "global-log",
+            "find", "status", "branch", "rm-branch", "reset", "merge",
+            "add-remote", "rm-remote", "push", "fetch", "pull");
+
+    /**Check for remote commands.
+     * @param args the original arguments*/
+    private static void remoteCommands(String... args) throws IOException {
+        if (args[0].equals("add-remote") && args.length == 3) {
+            AddRemote.addRemote(args[1], args[2]);
+        } else if (args[0].equals("rm-remote") && args.length == 2) {
+            RemoveRemote.removeRemote(args[1]);
+        } else if (args[0].equals("push") && args.length == 3) {
+            Push.pushRemote(args[1], args[2]);
+        } else if (args[0].equals("fetch") && args.length == 3) {
+            Fetch.fetch(args[1], args[2]);
+        } else if (args[0].equals("pull") && args.length == 3) {
+            Pull.pull(args[1], args[2]);
+        }
+    }
+    /**Check for normal commands.
+     * @param args the original arguments*/
+    private static void normalCommands(String... args) throws IOException {
         if (args[0].equals("add") && args.length == 2) {
             Add add = new Add();
             add.add(args[1]);
@@ -71,10 +99,5 @@ public class Main {
             Merge.merge(args[1]);
         }
     }
-
-    /**List of commands for gitlet.*/
-    private static List<String> _commands = Arrays.asList("init", "add", "log",
-            "commit", "checkout", "rm", "global-log",
-            "find", "status", "branch", "rm-branch", "reset", "merge");
 
 }

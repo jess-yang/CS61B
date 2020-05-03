@@ -23,7 +23,7 @@ public class Commit implements Serializable {
         _parentsha1 = null;
         _blob = new HashMap<String, Blob>();
 
-        _sha1 = Utils.sha1(Utils.serialize(this));
+        _sha1 = "0000000000000000000000000000000000000000";
     }
 
     /**Merge conflict constructor.
