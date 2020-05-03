@@ -66,10 +66,5 @@ public class Push {
         File headBranch = new File(remotePath + "/branches" + "/" + branchName);
         Utils.writeContents(headBranch, current.getSHA1());
 
-
-
-
-
-
     }
 }
